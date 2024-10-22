@@ -407,6 +407,13 @@ $$
 \hat \delta_a = \hat p_1 - \hat p_0 \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}}> \Phi^{-1}(1 - \alpha)
 $$
+$$
+\begin{gather*}
+& \alpha=\sum_{y_1=0}^{n / 2} \sum_{y_2=0}^{n / 2} P\left(y_1 \mid p_1=p_2\right) P\left(y_2 \mid p_2\right) I\left(Z>z_\alpha\right) \\
+& \beta=1 - \sum_{y_1=0}^{n / 2} \sum_{y_2=0}^{n / 2} P\left(y_1 \mid p_1=p_2+\delta\right) P\left(y_2 \mid p_2\right) I\left(Z>z_\alpha\right)
+\end{gather*}
+$$
+
 Target Region Consistency Criteria
 $$
 \hat \delta_j = \hat p_{1j} - \hat p_{0j} \\
