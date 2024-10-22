@@ -405,11 +405,10 @@ p6
 Global Success Criteria
 
 $$
-\hat \delta_a = \hat p_1 - \hat p_0
-$$
-
-$$
+\begin{gather*}
+\hat \delta_a = \hat p_1 - \hat p_0 \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}}> \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Target Region Consistency Criteria
