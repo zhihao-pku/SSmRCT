@@ -408,10 +408,10 @@ $$
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}}> \Phi^{-1}(1 - \alpha)
 $$
 $$
-\begin{gather*}
+\begin{align}
 & \alpha=\sum_{y_1=0}^{n / 2} \sum_{y_2=0}^{n / 2} P\left(y_1 \mid p_1=p_2\right) P\left(y_2 \mid p_2\right) I\left(Z>z_\alpha\right) \\
 & \beta=1 - \sum_{y_1=0}^{n / 2} \sum_{y_2=0}^{n / 2} P\left(y_1 \mid p_1=p_2+\delta\right) P\left(y_2 \mid p_2\right) I\left(Z>z_\alpha\right)
-\end{gather*}
+\end{align}
 $$
 
 Target Region Consistency Criteria
