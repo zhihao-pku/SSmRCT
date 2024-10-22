@@ -403,9 +403,11 @@ p6
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a = \hat p_1 - \hat p_0
 $$
+
 $$
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}}> \Phi^{-1}(1 - \alpha)
 $$
