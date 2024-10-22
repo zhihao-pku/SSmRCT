@@ -15,7 +15,7 @@ getPwr_Bin_Equi_JM1(
   alpha,
   N,
   r,
-  sim = F,
+  sim = FALSE,
   nsim = 1000,
   seed = 0
 )
@@ -27,31 +27,9 @@ getPwr_Bin_Equi_JM1(
 Title
 }
 \examples{
-library(ggplot2)
-dat1 <- getPwr_Bin_Equi_JM1(
+getPwr_Bin_Equi_JM1(
   p1_j = 0.55, p0_j = 0.65, p1_nj = 0.65, p0_nj = 0.65,
   f = seq(0.1, 0.9, 0.1), pi = 0.5,
-  cut = 0.2, alpha = 0.025, N = 400, r = 1, sim = F
+  cut = 0.2, alpha = 0.025, N = 400, r = 1, sim = FALSE
 )
-dat1$M <- "calc"
-dat2 <- getPwr_Bin_Equi_JM1(
-  p1_j = 0.55, p0_j = 0.65, p1_nj = 0.65, p0_nj = 0.65,
-  f = seq(0.1, 0.9, 0.1), pi = 0.5,
-  cut = 0.2, alpha = 0.025, N = 400, r = 1, sim = T
-)
-dat2$M <- "sim"
-
-dat <- bind_rows(dat1, dat2)
-dat <- gather(
-  data = dat, key = "pwr class",
-  value = "pwr", p1, p2, p3, p4
-)
-
-ggplot(data = dat, aes(x = f, y = pwr, linetype = M)) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(vars(`pwr class`), nrow = 2) +
-  scale_x_continuous(breaks = seq(0.1, 0.9, 0.2)) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1.0, 0.2)) +
-  labs(x = "allocation ratio", color = "", linetype = "")
 }

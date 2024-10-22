@@ -17,31 +17,12 @@
 #' @export
 #'
 #' @examples
-#' library(ggplot2)
-#' dat1 <- getPwr_Con_Super_JM1(
+#' getPwr_Con_Super_JM1(
 #'   delta_j = 0.5, delta_nj = 0.7, sigma = 1,
 #'   f = seq(0.1, 0.9, 0.1),
-#'   pi = 0.5, alpha = 0.025, N = 100, r = 1, direct = 1, sim = F
+#'   pi = 0.5, alpha = 0.025, N = 100, r = 1, direct = 1, sim = FALSE
 #' )
-#' dat1$M <- "calc"
-#' dat2 <- getPwr_Con_Super_JM1(
-#'   delta_j = 0.5, delta_nj = 0.7, sigma = 1,
-#'   f = seq(0.1, 0.9, 0.1),
-#'   pi = 0.5, alpha = 0.025, N = 100, r = 1, direct = 1, sim = T
-#' )
-#' dat2$M <- "sim"
-#'
-#' dat <- bind_rows(dat1, dat2)
-#' dat <- gather(data = dat, key = "pwr class", value = "pwr", p1, p2, p3, p4)
-#'
-#' ggplot(data = dat, aes(x = f, y = pwr, linetype = M)) +
-#'   geom_point() +
-#'   geom_line() +
-#'   facet_wrap(vars(`pwr class`), nrow = 2) +
-#'   scale_x_continuous(breaks = seq(0.1, 0.9, 0.2)) +
-#'   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1.0, 0.2)) +
-#'   labs(x = "allocation ratio", linetype = "")
-getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, direct = 1, sim = F, nsim = 1000, seed = 0) {
+getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, direct = 1, sim = FALSE, nsim = 1000, seed = 0) {
   if (!sim) {
     eg <- as.data.frame(expand.grid(
       delta_j = delta_j,

@@ -16,7 +16,7 @@ getPwr_Surv_Noninf_JM1(
   direct = -1,
   lambda0_j = 1,
   lambda0_nj = 1,
-  sim = F,
+  sim = FALSE,
   nsim = 1000,
   seed = 0
 )
@@ -28,33 +28,10 @@ getPwr_Surv_Noninf_JM1(
 Title
 }
 \examples{
-library(ggplot2)
-dat1 <- getPwr_Surv_Noninf_JM1(
+getPwr_Surv_Noninf_JM1(
   delta_j = log(1.1), delta_nj = log(1.0),
   f = seq(0.1, 0.9, 0.1), cut = log(1.3),
   pi = 0.5, alpha = 0.025, N = 400, r = 1,
-  direct = -1, sim = F
+  direct = -1, sim = FALSE
 )
-dat1$M <- "calc"
-dat2 <- getPwr_Surv_Noninf_JM1(
-  delta_j = log(1.1), delta_nj = log(1.0),
-  f = seq(0.1, 0.9, 0.1), cut = log(1.3),
-  pi = 0.5, alpha = 0.025, N = 400, r = 1,
-  direct = -1, sim = T
-)
-dat2$M <- "sim"
-
-dat <- bind_rows(dat1, dat2)
-dat <- gather(
-  data = dat, key = "pwr class", value = "pwr",
-  p1, p2, p3, p4
-)
-
-ggplot(data = dat, aes(x = f, y = pwr, linetype = M)) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(vars(`pwr class`), nrow = 2) +
-  scale_x_continuous(breaks = seq(0.1, 0.9, 0.2)) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1.0, 0.2)) +
-  labs(x = "allocation ratio", color = "", linetype = "")
 }

@@ -13,7 +13,7 @@ getPwr_Surv_Equi_JM2(
   r,
   direct = -1,
   lambda0_i = 1,
-  sim = F,
+  sim = FALSE,
   nsim = 1000,
   seed = 0
 )
@@ -25,43 +25,16 @@ getPwr_Surv_Equi_JM2(
 Title
 }
 \examples{
-library(ggplot2)
 f_set <- seq(0.1, 0.9, 0.1)
-dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
+map_dfr(.x = 1:length(f_set), .f = function(i) {
   f <- f_set[i]
   res <- getPwr_Surv_Equi_JM2(
     delta_i = c(log(1.1), log(1.0)),
     fi = c(f, 1 - f), cut = log(1.3),
-    alpha = 0.025, N = 300, r = 1, direct = -1, sim = F
+    alpha = 0.025, N = 300, r = 1, direct = -1, sim = FALSE
   )$overall
   res$M <- "calc"
   res$f <- f
   res
 })
-
-dat2 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
-  f <- f_set[i]
-  res <- getPwr_Surv_Equi_JM2(
-    delta_i = c(log(1.1), log(1.0)),
-    fi = c(f, 1 - f), cut = log(1.3),
-    alpha = 0.025, N = 300, r = 1, direct = -1, sim = T
-  )$overall
-  res$M <- "sim"
-  res$f <- f
-  res
-})
-
-dat <- bind_rows(dat1, dat2)
-dat <- gather(
-  data = dat, key = "pwr class",
-  value = "pwr", p1, p2, p3, p4
-)
-
-ggplot(data = dat, aes(x = f, y = pwr, linetype = M)) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(vars(`pwr class`), nrow = 2) +
-  scale_x_continuous(breaks = seq(0.1, 0.9, 0.2)) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1.0, 0.2)) +
-  labs(x = "allocation ratio", linetype = "")
 }
