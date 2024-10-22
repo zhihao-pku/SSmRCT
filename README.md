@@ -413,10 +413,14 @@ Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}}> \Phi^{-1}(1 - \alpha)
 $$
 
 Target Region Consistency Criteria
+
 $$
+\begin{gather*}
 \hat \delta_j = \hat p_{1j} - \hat p_{0j} \\
 \hat \delta_j - \pi\hat \delta_a \gt 0
+\end{gather*}
 $$
+
 ### Case
 
 - Response rates of experimental and placebo groups: in the target region: `p1_j = 0.65, p0_j = 0.5`; in the non-target region: `p1_nj = 0.75, p0_nj = 0.5`.
