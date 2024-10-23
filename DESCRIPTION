@@ -10,9 +10,8 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Depends: 
-    R (>= 3.5.0)
-Imports: 
     dplyr,
     mvtnorm,
     purrr,
     survival
+
