@@ -19,6 +19,7 @@ rm(list = ls())
 $$
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 - Target Region Consistency Criteria
 
 $$
@@ -77,13 +78,17 @@ p1
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0
 $$
+
 ### Case
 
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
@@ -94,6 +99,7 @@ $$
 - One sided significance level: `alpha = 0.025`.
 - High priority metric (where a larger value is better): `direct = 1`.
 - Using theoretical calculation or data simulation method: `sim.`
+
 ```R
 dat1 <- getPwr_Con_Noninf_JM1(
   delta_j = -0.2, delta_nj = -0.1, sigma = 1,
@@ -131,15 +137,19 @@ p2
 ### Success Criteria
 
 Global Success Criteria
+
 $$
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0\text{ and }\hat \delta_j - \hat \delta_a - \pi\Delta \lt 0
 $$
 
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -187,10 +197,13 @@ p3
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Regional Consistency Criteria
+
 $$
 \hat \delta_i > 0 \text{ for i = 1, 2, .., m}
 $$
@@ -261,13 +274,17 @@ p4
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_i + \Delta\gt 0 \text{ for i = 1, 2, .., m}
 $$
+
 ### Case
 
 - Mean difference between experimental and positive-control groups for each region: `delta_i = c(-0.5, 0)`;
@@ -283,6 +300,7 @@ $$
 - High priority metric (where a larger value is better): `direct = 1`.
 
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 f_set <- seq(0.1, 0.9, 0.1)
 dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
@@ -333,13 +351,17 @@ p5
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 $$
+
 Regional Consistency Criteria
+
 $$
 \hat \delta_i + \Delta\gt 0 \text{ and } \hat \delta_i - \Delta \lt 0 \text{ for i = 1, 2, .., m}
 $$
+
 ### Case
 
 - Mean difference between experimental and positive-control groups for each region: `delta_i = c(-0.5, 0)`;
@@ -353,6 +375,7 @@ $$
 - One sided significance level: `alpha = 0.025`.
 
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 f_set <- seq(0.1, 0.9, 0.1)
 dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
@@ -435,6 +458,7 @@ $$
 - High priority metric (where a larger value is better): `direct = 1`.
 
 - Using theoretical calculation or data simulation method: `sim.`
+
 ```R
 dat1 <- getPwr_Bin_Super_JM1(
   p1_j = 0.65, p0_j = 0.5, p1_nj = 0.75, p0_nj = 0.5,
@@ -471,15 +495,19 @@ p7
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a = \hat p_1 - \hat p_0 \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_j = \hat p_{1j} - \hat p_{0j} \\
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0
 $$
+
 ### Case
 
 - Response rates of experimental and positive-control groups: in the target region: `p1_j = 0.55, p0_j = 0.65`; in the non-target region: `p1_nj = 0.65, p0_nj = 0.65`.
@@ -497,6 +525,7 @@ $$
 - High priority metric (where a larger value is better): `direct = 1`.
 
 - Using theoretical calculation or data simulation method: `sim.`
+
 ```R
 dat1 <- getPwr_Bin_Noninf_JM1(
   p1_j = 0.55, p0_j = 0.65, p1_nj = 0.65, p0_nj = 0.65,
@@ -538,15 +567,19 @@ p8
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a = \hat p_1 - \hat p_0 \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_j = \hat p_{1j} - \hat p_{0j} \\
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0\text{ and }\hat \delta_j - \hat \delta_a - \pi\Delta \lt 0
 $$
+
 ### Case
 
 - Response rates of experimental and positive-control groups: in the target region: `p1_j = 0.55, p0_j = 0.65`; in the non-target region: `p1_nj = 0.65, p0_nj = 0.65`.
@@ -564,6 +597,7 @@ $$
 - High priority metric (where a larger value is better): `direct = 1`.
 
 - Using theoretical calculation or data simulation method: `sim.`
+
 ```R
 dat1 <- getPwr_Bin_Equi_JM1(
   p1_j = 0.55, p0_j = 0.65, p1_nj = 0.65, p0_nj = 0.65,
@@ -603,15 +637,20 @@ p9
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a =  \hat p_1 - \hat p_0 \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Regional Consistency Criteria
+
 $$
 \hat \delta_i  = \hat p_{1i} - \hat p_{0i} \gt 0 \text{ for i = 1, 2, .., m}
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -619,6 +658,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 f_set <- seq(0.1, 0.9, 0.1)
 dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
@@ -670,16 +710,21 @@ p10
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a =  \hat p_1 - \hat p_0 \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Regional Consistency Criteria
+
 $$
 \hat \delta_i  = \hat p_{1i} - \hat p_{0i}\\
 \hat \delta_i+ \Delta \gt 0 \text{ for i = 1, 2, .., m}
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -687,6 +732,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 f_set <- seq(0.1, 0.9, 0.1)
 dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
@@ -739,16 +785,21 @@ p11
 *Using the High Priority Metric as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a =  \hat p_1 - \hat p_0 \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 $$
+
 Regional Consistency Criteria
+
 $$
 \hat \delta_i  = \hat p_{1i} - \hat p_{0i}\\
 \hat \delta_i + \Delta\gt 0 \text{ and } \hat \delta_i - \Delta \lt 0 \text{ for i = 1, 2, .., m}
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -756,6 +807,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 f_set <- seq(0.1, 0.9, 0.1)
 dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
@@ -810,27 +862,36 @@ p12
 criterion = 1
 
 Global Success Criteria
+
 $$
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_j = log(\hat {HR_j}) \\
 \hat \delta_j - \pi\hat \delta_a \gt 0
 $$
+
 criterion = 2
 
 Global Success Criteria
+
 $$
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 1 - e^{\hat \delta_j} - \pi(1 - e^{\hat \delta_a}) \gt 0
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -838,6 +899,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 dat1 <- getPwr_Surv_Super_JM1(
   delta_j = log(0.8), delta_nj = log(0.6),
@@ -893,16 +955,21 @@ p13
 *Using “the Smaller the HR, the Better” as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_j = log(\hat {HR_j}) \\
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -910,6 +977,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 dat1 <- getPwr_Surv_Noninf_JM1(
   delta_j = log(1.1), delta_nj = log(1.0),
@@ -951,16 +1019,21 @@ p14
 *Using “the Smaller the HR, the Better” as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_j = log(\hat {HR_j}) \\
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0\text{ and }\hat \delta_j - \hat \delta_a - \pi\Delta \lt 0
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -968,6 +1041,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 dat1 <- getPwr_Surv_Equi_JM1(
   delta_j = log(1.1), delta_nj = log(1.0),
@@ -1007,16 +1081,21 @@ p15
 *Using “the Smaller the HR, the Better” as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a = log(\hat HR_a) \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Regional Consistency Criteria
+
 $$
 \hat \delta_i = log(\hat {HR_i}) \\
 \hat \delta_i > 0 \text{ for i = 1, 2, .., m}
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -1024,6 +1103,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 f_set <- seq(0.1, 0.9, 0.1)
 dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
@@ -1075,16 +1155,21 @@ p16
 *Using “the Smaller the HR, the Better” as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 $$
+
 Target Region Consistency Criteria
+
 $$
 \hat \delta_i = log(\hat {HR_i}) \\
 \hat \delta_i + \Delta\gt 0 \text{ for i = 1, 2, .., m}
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -1092,6 +1177,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 f_set <- seq(0.1, 0.9, 0.1)
 dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
@@ -1143,16 +1229,21 @@ p17
 *Using “the Smaller the HR, the Better” as an Example*
 
 Global Success Criteria
+
 $$
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 $$
+
 Regional Consistency Criteria
+
 $$
 \hat \delta_i = log(\hat {HR_i})\\
 \hat \delta_i + \Delta\gt 0 \text{ and } \hat \delta_i - \Delta \lt 0 \text{ for i = 1, 2, .., m}
 $$
+
 ### Case
+
 - Mean difference between experimental and positive-control groups: in the target region: `delta_j = -0.2`; in the non-target region: `delta_nj = -0.1`; Common standard deviation: `sigma = 1`.
 - Global sample size: `N = 400`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 - Proportion of sample size allocated to the target region: `seq(0.1, 0.9, 0.1)`.
@@ -1160,6 +1251,7 @@ $$
 - Retaining 50% of global efficacy: `pi = 0.5`.
 - One sided significance level: `alpha = 0.025`.
 - Using theoretical calculation or data simulation method: `sim`.
+
 ```R
 f_set <- seq(0.1, 0.9, 0.1)
 dat1 <- map_dfr(.x = 1:length(f_set), .f = function(i) {
