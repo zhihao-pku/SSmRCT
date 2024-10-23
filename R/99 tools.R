@@ -2,8 +2,6 @@
 #'
 #' @param A
 #' @param B
-#' @param a
-#' @param b
 #'
 #' @return
 #' @export
@@ -21,6 +19,15 @@ combine_matrix <- function(A, B) {
   return(combined_matrix)
 }
 
+#' Title
+#'
+#' @param a
+#' @param b
+#'
+#' @return
+#' @export
+#'
+#' @examples
 combine_vector <- function(a, b) {
   combined_vector <- numeric(length(a) + length(b))
   combined_vector[seq(1, length(combined_vector), by = 2)] <- a

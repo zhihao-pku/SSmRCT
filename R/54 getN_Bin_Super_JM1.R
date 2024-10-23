@@ -1,8 +1,9 @@
 #' Title
 #'
-#' @param delta_j
-#' @param delta_nj
-#' @param sigma
+#' @param p1_j
+#' @param p0_j
+#' @param p1_nj
+#' @param p0_nj
 #' @param pi
 #' @param beta1
 #' @param N
@@ -13,15 +14,16 @@
 #' @export
 #'
 #' @examples
-#' getN_Con_Super_JM1(
-#'   delta_j = 0.5, delta_nj = 0.7, sigma = 1,
+#' getN_Bin_Super_JM1(
+#'   p1_j = 0.6, p0_j = 0.4, p1_nj = 0.7, p0_nj = 0.4,
 #'   pi = 0.5, beta1 = 0.2, N = seq(100, 400, 100), r = 1, direct = 1
 #' )
-getN_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, pi, beta1, N, r, direct = 1) {
+getN_Bin_Super_JM1 <- function(p1_j, p0_j, p1_nj, p0_nj, pi, beta1, N, r, direct = 1) {
   eg <- as.data.frame(expand.grid(
-    delta_j = delta_j,
-    delta_nj = delta_nj,
-    sigma = sigma,
+    p1_j = p1_j,
+    p0_j = p0_j,
+    p1_nj = p1_nj,
+    p0_nj = p0_nj,
     pi = pi,
     beta1 = beta1,
     N = N,
@@ -30,22 +32,31 @@ getN_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, pi, beta1, N, r, direct
   ))
   res <- map_dfr(.x = 1:nrow(eg), .f = function(i) {
     R <- eg[i, ]
-    delta_j <- R$delta_j
-    delta_nj <- R$delta_nj
-    sigma <- R$sigma
+    p1_j <- R$p1_j
+    p0_j <- R$p0_j
+    p1_nj <- R$p1_nj
+    p0_nj <- R$p0_nj
     pi <- R$pi
     beta1 <- R$beta1
     N <- R$N
     r <- R$r
     direct <- R$direct
+    delta_j <- p1_j - p0_j
+    delta_nj <- p1_nj - p0_nj
+    p_j <- p0_j / (1 + r) + p1_j * r / (1 + r)
+    sigma_j <- sqrt(p_j * (1 - p_j))
     gr <- 2 + r + 1 / r
     getPwr <- function(f) {
       Nj <- N * f
       delta <- delta_j * f + delta_nj * (1 - f)
-      sej <- sqrt(gr * sigma^2 / Nj +
-        pi^2 * gr * sigma^2 / N -
+      p0_a <- p0_j * f + p0_nj * (1 - f)
+      p1_a <- p1_j * f + p1_nj * (1 - f)
+      p_a <- p0_a / (1 + r) + p1_a * r / (1 + r)
+      sigma_a <- sqrt(p_a * (1 - p_a))
+      sej <- sqrt(gr * sigma_j^2 / Nj +
+        pi^2 * gr * sigma_a^2 / N -
         2 * pi * sqrt(f) *
-          sqrt(gr * sigma^2 / Nj * gr * sigma^2 / N))
+          sqrt(gr * sigma_j^2 / Nj * gr * sigma_a^2 / N))
       uj <- (delta_j - pi * delta) / sej
       uj <- if_else(direct == -1, (-1) * uj, uj)
       pmvnorm(
@@ -65,8 +76,9 @@ getN_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, pi, beta1, N, r, direct
       finally = print("Some N are too small, resulting in NA")
     )
     data.frame(
-      delta_j, delta_nj,
-      sigma, pi,
+      p0_j, p1_j,
+      p0_nj, p1_nj,
+      pi,
       beta1, N, r,
       direct,
       pwr = 1 - beta1, f, Nj = N * f

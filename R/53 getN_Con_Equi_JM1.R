@@ -4,29 +4,30 @@
 #' @param delta_nj
 #' @param sigma
 #' @param pi
+#' @param cut
 #' @param beta1
 #' @param N
 #' @param r
-#' @param direct
 #'
 #' @return
 #' @export
 #'
 #' @examples
-#' getN_Con_Super_JM1(
-#'   delta_j = 0.5, delta_nj = 0.7, sigma = 1,
-#'   pi = 0.5, beta1 = 0.2, N = seq(100, 400, 100), r = 1, direct = 1
+#' getN_Con_Equi_JM1(
+#'   delta_j = -0.1, delta_nj = 0, sigma = 1,
+#'   pi = 0.5, cut = 0.3, beta1 = 0.2,
+#'   N = seq(100, 400, 100), r = 1
 #' )
-getN_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, pi, beta1, N, r, direct = 1) {
+getN_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, pi, cut, beta1, N, r) {
   eg <- as.data.frame(expand.grid(
     delta_j = delta_j,
     delta_nj = delta_nj,
     sigma = sigma,
     pi = pi,
+    cut = cut,
     beta1 = beta1,
     N = N,
-    r = r,
-    direct = direct
+    r = r
   ))
   res <- map_dfr(.x = 1:nrow(eg), .f = function(i) {
     R <- eg[i, ]
@@ -34,25 +35,25 @@ getN_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, pi, beta1, N, r, direct
     delta_nj <- R$delta_nj
     sigma <- R$sigma
     pi <- R$pi
+    cut <- R$cut
     beta1 <- R$beta1
     N <- R$N
     r <- R$r
-    direct <- R$direct
     gr <- 2 + r + 1 / r
     getPwr <- function(f) {
       Nj <- N * f
       delta <- delta_j * f + delta_nj * (1 - f)
       sej <- sqrt(gr * sigma^2 / Nj +
-        pi^2 * gr * sigma^2 / N -
-        2 * pi * sqrt(f) *
+        gr * sigma^2 / N -
+        2 * sqrt(f) *
           sqrt(gr * sigma^2 / Nj * gr * sigma^2 / N))
-      uj <- (delta_j - pi * delta) / sej
-      uj <- if_else(direct == -1, (-1) * uj, uj)
-      pmvnorm(
-        lower = c(0),
-        upper = c(Inf),
-        mean = c(uj),
-        sigma = 1
+      uj1 <- (delta_j - delta + pi * cut) / sej
+      uj2 <- (delta_j - delta - pi * cut) / sej
+      p2 <- pmvnorm(
+        lower = c(0, -Inf),
+        upper = c(Inf, 0),
+        mean = c(uj1, uj2),
+        sigma = matrix(1, nrow = 2, ncol = 2)
       ) - (1 - beta1)
     }
     f <- tryCatch(
@@ -66,9 +67,8 @@ getN_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, pi, beta1, N, r, direct
     )
     data.frame(
       delta_j, delta_nj,
-      sigma, pi,
+      sigma, pi, cut,
       beta1, N, r,
-      direct,
       pwr = 1 - beta1, f, Nj = N * f
     )
   })
