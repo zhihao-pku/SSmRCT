@@ -42,7 +42,7 @@ getPwr_Con_Equi_JM2 <- function(delta_i, sigma, fi, cut, alpha, N, r, sim = FALS
     M <- diag(num + 1)
     M[1, ] <- c(1, sqrt(fi))
     M[, 1] <- c(1, sqrt(fi))
-    M1 <- combine_matrix(M, M)
+    M1 <- combine(M, M)
     p1 <- pmvnorm(
       lower = c(qnorm(1 - alpha), -Inf),
       upper = c(Inf, -qnorm(1 - alpha)),
@@ -63,7 +63,7 @@ getPwr_Con_Equi_JM2 <- function(delta_i, sigma, fi, cut, alpha, N, r, sim = FALS
     p3 <- pmvnorm(
       lower = c(qnorm(1 - alpha), -Inf, rep(c(0, -Inf), num)),
       upper = c(Inf, -qnorm(1 - alpha), rep(c(Inf, 0), num)),
-      mean = c(u1, u2, combine_vector(ui1, ui2)),
+      mean = c(u1, u2, combine(ui1, ui2)),
       sigma = M1
     )
     p4 <- p3 / p1
@@ -76,7 +76,7 @@ getPwr_Con_Equi_JM2 <- function(delta_i, sigma, fi, cut, alpha, N, r, sim = FALS
       M <- diag(2)
       M[1, ] <- c(1, sqrt(fi[k]))
       M[, 1] <- c(1, sqrt(fi[k]))
-      M2 <- combine_matrix(M, M)
+      M2 <- combine(M, M)
       p_joint_ <- pmvnorm(
         lower = c(qnorm(1 - alpha), -Inf, 0, -Inf),
         upper = c(Inf, -qnorm(1 - alpha), Inf, 0),

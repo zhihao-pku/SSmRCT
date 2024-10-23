@@ -4,17 +4,7 @@
 \alias{getN_Con_Super_JM1}
 \title{Title}
 \usage{
-getN_Con_Super_JM1(
-  delta_j,
-  delta_nj,
-  sigma,
-  pi,
-  alpha,
-  beta1,
-  N,
-  r,
-  direct = 1
-)
+getN_Con_Super_JM1(delta_j, delta_nj, sigma, pi, beta1, N, r, direct = 1)
 }
 \arguments{
 \item{direct}{}
@@ -25,6 +15,6 @@ Title
 \examples{
 getN_Con_Super_JM1(
   delta_j = 0.5, delta_nj = 0.7, sigma = 1,
-  pi = 0.5, alpha = 0.025, beta1 = 0.2, N = seq(100, 400, 100), r = 1, direct = 1
+  pi = 0.5, beta1 = 0.2, N = seq(100, 400, 100), r = 1, direct = 1
 )
 }
