@@ -497,15 +497,19 @@ p7
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = \hat p_1 - \hat p_0 \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Target Region Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_j = \hat p_{1j} - \hat p_{0j} \\
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0
+\end{gather*}
 $$
 
 ### Case
@@ -569,15 +573,19 @@ p8
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = \hat p_1 - \hat p_0 \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
+\end{gather*}
 $$
 
 Target Region Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_j = \hat p_{1j} - \hat p_{0j} \\
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0\text{ and }\hat \delta_j - \hat \delta_a - \pi\Delta \lt 0
+\end{gather*}
 $$
 
 ### Case
@@ -639,8 +647,10 @@ p9
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a =  \hat p_1 - \hat p_0 \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Regional Consistency Criteria
@@ -712,15 +722,19 @@ p10
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a =  \hat p_1 - \hat p_0 \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Regional Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_i  = \hat p_{1i} - \hat p_{0i}\\
 \hat \delta_i+ \Delta \gt 0 \text{ for i = 1, 2, .., m}
+\end{gather*}
 $$
 
 ### Case
@@ -787,15 +801,19 @@ p11
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a =  \hat p_1 - \hat p_0 \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
+\end{gather*}
 $$
 
 Regional Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_i  = \hat p_{1i} - \hat p_{0i}\\
 \hat \delta_i + \Delta\gt 0 \text{ and } \hat \delta_i - \Delta \lt 0 \text{ for i = 1, 2, .., m}
+\end{gather*}
 $$
 
 ### Case
@@ -864,15 +882,19 @@ criterion = 1
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Target Region Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_j = log(\hat {HR_j}) \\
 \hat \delta_j - \pi\hat \delta_a \gt 0
+\end{gather*}
 $$
 
 criterion = 2
@@ -880,8 +902,10 @@ criterion = 2
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Target Region Consistency Criteria
@@ -957,15 +981,19 @@ p13
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Target Region Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_j = log(\hat {HR_j}) \\
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0
+\end{gather*}
 $$
 
 ### Case
@@ -1021,15 +1049,19 @@ p14
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
+\end{gather*}
 $$
 
 Target Region Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_j = log(\hat {HR_j}) \\
 \hat \delta_j - \hat \delta_a + \pi\Delta \gt 0\text{ and }\hat \delta_j - \hat \delta_a - \pi\Delta \lt 0
+\end{gather*}
 $$
 
 ### Case
@@ -1083,15 +1115,19 @@ p15
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = log(\hat HR_a) \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Regional Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_i = log(\hat {HR_i}) \\
 \hat \delta_i > 0 \text{ for i = 1, 2, .., m}
+\end{gather*}
 $$
 
 ### Case
@@ -1157,15 +1193,19 @@ p16
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+\end{gather*}
 $$
 
 Target Region Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_i = log(\hat {HR_i}) \\
 \hat \delta_i + \Delta\gt 0 \text{ for i = 1, 2, .., m}
+\end{gather*}
 $$
 
 ### Case
@@ -1231,15 +1271,19 @@ p17
 Global Success Criteria
 
 $$
+\begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
+\end{gather*}
 $$
 
 Regional Consistency Criteria
 
 $$
+\begin{gather*}
 \hat \delta_i = log(\hat {HR_i})\\
 \hat \delta_i + \Delta\gt 0 \text{ and } \hat \delta_i - \Delta \lt 0 \text{ for i = 1, 2, .., m}
+\end{gather*}
 $$
 
 ### Case
