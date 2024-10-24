@@ -9,19 +9,21 @@ getPwr_Con_Noninf_JM1(
   delta_nj,
   sigma,
   f,
-  pi,
+  pi = 0.5,
   cut,
-  alpha,
+  alpha = 0.025,
+  beta = NA,
   N,
-  r,
+  r = 1,
   direct = 1,
   sim = FALSE,
   nsim = 1000,
-  seed = 0
+  seed = 0,
+  numcore = 2
 )
 }
 \arguments{
-\item{seed}{}
+\item{numcore}{}
 }
 \description{
 Title
@@ -29,7 +31,12 @@ Title
 \examples{
 getPwr_Con_Noninf_JM1(
   delta_j = -0.2, delta_nj = -0.1, sigma = 1,
-  f = seq(0.1, 0.9, 0.1), pi = 0.5, cut = 0.4, alpha = 0.025,
+  f = seq(0.1, 0.9, 0.1), pi = 0.5, cut = 0.4, alpha = 0.025, beta = NA,
   N = 400, r = 1, direct = 1, sim = FALSE
+)
+getPwr_Con_Noninf_JM1(
+  delta_j = -0.2, delta_nj = -0.1, sigma = 1,
+  f = seq(0.1, 0.9, 0.1), pi = 0.5, cut = 0.4, alpha = 0.025, beta = 0.2,
+  N = NA, r = 1, direct = 1, sim = FALSE
 )
 }

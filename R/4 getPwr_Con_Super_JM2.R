@@ -4,9 +4,9 @@
 #' @param sigma
 #' @param fi
 #' @param alpha
+#' @param beta
 #' @param N
 #' @param r
-#' @param direct
 #' @param sim
 #' @param nsim
 #' @param seed
@@ -15,23 +15,41 @@
 #' @export
 #'
 #' @examples
-#' f_set <- seq(0.1, 0.9, 0.1)
-#' map_dfr(.x = 1:length(f_set), .f = function(i) {
-#'   f <- f_set[i]
-#'   res <- getPwr_Con_Super_JM2(
-#'     delta_i = c(1, 0.8), sigma = 4,
-#'     fi = c(f, 1 - f),
-#'     alpha = 0.025, N = 200, r = 1, direct = 1, sim = FALSE
-#'   )$overall
-#'   res$M <- "calc"
-#'   res$f <- f
-#'   res
-#' })
-getPwr_Con_Super_JM2 <- function(delta_i, sigma, fi, alpha, N, r, direct = 1, sim = FALSE, nsim = 1000, seed = 0) {
+# f_set <- seq(0.1, 0.9, 0.1)
+# map_dfr(.x = 1:length(f_set), .f = function(i) {
+#   f <- f_set[i]
+#   res <- getPwr_Con_Super_JM2(
+#     delta_i = c(1, 0.8), sigma = 4,
+#     fi = c(f, 1 - f),
+#     alpha = 0.025, beta = NA, N = 200, r = 1, sim = FALSE
+#   )$overall
+#   res$M <- "calc"
+#   res$f <- f
+#   res
+# })
+# f_set <- seq(0.1, 0.9, 0.1)
+# map_dfr(.x = 1:length(f_set), .f = function(i) {
+#   f <- f_set[i]
+#   res <- getPwr_Con_Super_JM2(
+#     delta_i = c(1, 0.8), sigma = 4,
+#     fi = c(f, 1 - f),
+#     alpha = 0.025, beta = 0.2, N = NA, r = 1, sim = FALSE
+#   )$overall
+#   res$M <- "calc"
+#   res$f <- f
+#   res
+# })
+getPwr_Con_Super_JM2 <- function(delta_i, sigma, fi, alpha = 0.025, beta = NA, N, r = 1, sim = FALSE, nsim = 1000, seed = 0) {
   if (!sim) {
-    Ni <- N * fi
     gr <- 2 + r + 1 / r
     delta <- sum(delta_i * fi)
+    if (is.na(N)) {
+      N <- getN_Con_Super(
+        delta, sigma, alpha,
+        beta, NA, r
+      )$N
+    }
+    Ni <- N * fi
     sei <- sqrt(gr * sigma^2 / Ni)
     ui <- delta_i / sei
     se <- sqrt(gr * sigma^2 / N)
@@ -40,7 +58,7 @@ getPwr_Con_Super_JM2 <- function(delta_i, sigma, fi, alpha, N, r, direct = 1, si
     M <- diag(num + 1)
     M[1, ] <- c(1, sqrt(fi))
     M[, 1] <- c(1, sqrt(fi))
-    if (direct == -1) {
+    if (delta < 0) {
       ui <- (-1) * ui
       u <- (-1) * u
     }
@@ -54,7 +72,7 @@ getPwr_Con_Super_JM2 <- function(delta_i, sigma, fi, alpha, N, r, direct = 1, si
     )
     p4 <- p3 / p1
     res <- data.frame(
-      delta = delta,
+      delta = delta, N = N,
       p1 = p1, p2 = p2, p3 = p3, p4 = p4
     )
     p_margin <- 1 - pnorm(q = 0, mean = ui, sd = 1)
@@ -77,9 +95,15 @@ getPwr_Con_Super_JM2 <- function(delta_i, sigma, fi, alpha, N, r, direct = 1, si
     )
   }
   if (sim) {
-    Ni <- N * fi
     gr <- 2 + r + 1 / r
     delta <- sum(delta_i * fi)
+    if (is.na(N)) {
+      N <- getN_Con_Super(
+        delta, sigma, alpha,
+        beta, NA, r
+      )$N
+    }
+    Ni <- N * fi
     num <- length(delta_i)
     da <- data.frame()
     di <- NULL
@@ -98,7 +122,7 @@ getPwr_Con_Super_JM2 <- function(delta_i, sigma, fi, alpha, N, r, direct = 1, si
       zi <- ut - uc
       za <- (mean(as.numeric(Xt), na.rm = T) -
         mean(as.numeric(Xc), na.rm = T)) / sqrt(gr * sigma^2 / N)
-      if (direct == -1) {
+      if (delta < 0) {
         zi <- (-1) * zi
         za <- (-1) * za
       }
@@ -116,9 +140,10 @@ getPwr_Con_Super_JM2 <- function(delta_i, sigma, fi, alpha, N, r, direct = 1, si
         p4 = mean(succ_i[succ_a == 1])
       ) %>%
       mutate(
-        delta = delta
+        delta = delta,
+        N = N,
       ) %>%
-      select(delta, p1, p2, p3, p4)
+      select(delta, N, p1, p2, p3, p4)
     p_margin <- colMeans(di)
     p_joint <- c()
     for (k in 1:num) {

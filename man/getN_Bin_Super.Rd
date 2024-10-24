@@ -4,10 +4,10 @@
 \alias{getN_Bin_Super}
 \title{Title}
 \usage{
-getN_Bin_Super(p1, p0, alpha, beta, N, r, direct = 1)
+getN_Bin_Super(p1, p0, alpha, beta, N, r)
 }
 \arguments{
-\item{direct}{}
+\item{r}{}
 }
 \description{
 Title

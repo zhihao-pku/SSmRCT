@@ -7,11 +7,13 @@
 #' @param pi
 #' @param cut
 #' @param alpha
+#' @param beta
 #' @param N
 #' @param r
 #' @param sim
 #' @param nsim
 #' @param seed
+#' @param numcore
 #'
 #' @return
 #' @export
@@ -19,10 +21,15 @@
 #' @examples
 #' getPwr_Con_Equi_JM1(
 #'   delta_j = -0.2, delta_nj = -0.1, sigma = 1,
-#'   f = seq(0.1, 0.9, 0.1), pi = 0.5, cut = 0.4, alpha = 0.025,
+#'   f = seq(0.1, 0.9, 0.1), pi = 0.5, cut = 0.4, alpha = 0.025, beta = NA,
 #'   N = 400, r = 1, sim = FALSE
 #' )
-getPwr_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, f, pi, cut, alpha, N, r, sim = FALSE, nsim = 1000, seed = 0) {
+#' getPwr_Con_Equi_JM1(
+#'   delta_j = -0.2, delta_nj = -0.1, sigma = 1,
+#'   f = seq(0.1, 0.9, 0.1), pi = 0.5, cut = 0.4, alpha = 0.025, beta = 0.2,
+#'   N = NA, r = 1, sim = FALSE
+#' )
+getPwr_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, f, pi = 0.5, cut, alpha = 0.025, beta = NA, N, r = 1, sim = FALSE, nsim = 1000, seed = 0, numcore = 2) {
   if (!sim) {
     eg <- as.data.frame(expand.grid(
       delta_j = delta_j,
@@ -32,10 +39,11 @@ getPwr_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, f, pi, cut, alpha, N, 
       pi = pi,
       cut = cut,
       alpha = alpha,
+      beta = beta,
       N = N,
       r = r
     ))
-    res <- map_dfr(.x = 1:nrow(eg), .f = function(i) {
+    res <- future_map_dfr(.x = 1:nrow(eg), .f = function(i) {
       R <- eg[i, ]
       delta_j <- R$delta_j
       delta_nj <- R$delta_nj
@@ -44,11 +52,18 @@ getPwr_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, f, pi, cut, alpha, N, 
       pi <- R$pi
       cut <- R$cut
       alpha <- R$alpha
+      beta <- R$beta
       N <- R$N
       r <- R$r
-      Nj <- N * f
       gr <- 2 + r + 1 / r
       delta <- delta_j * f + delta_nj * (1 - f)
+      if (is.na(N)) {
+        N <- getN_Con_Equi(
+          delta, sigma, cut, alpha,
+          beta, NA, r
+        )$N
+      }
+      Nj <- N * f
       se <- sqrt(gr * sigma^2 / N)
       u1 <- (delta + cut) / se
       u2 <- (delta - cut) / se
@@ -89,10 +104,10 @@ getPwr_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, f, pi, cut, alpha, N, 
       data.frame(
         delta_j, delta_nj, delta,
         sigma, f, pi, cut,
-        alpha, N, r,
+        alpha, beta, N, r,
         p1, p2, p3, p4
       )
-    })
+    }, .options = furrr_options(seed = TRUE))
   }
   if (sim) {
     eg <- as.data.frame(expand.grid(
@@ -103,11 +118,15 @@ getPwr_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, f, pi, cut, alpha, N, 
       pi = pi,
       cut = cut,
       alpha = alpha,
+      beta = beta,
       N = N,
       r = r,
       nsim = 1:nsim
     ))
-    ss <- map_dfr(.x = 1:nrow(eg), .f = function(i) {
+    if (numcore >= 2) {
+      plan(multisession, workers = numcore)
+    }
+    ss <- future_map_dfr(.x = 1:nrow(eg), .f = function(i) {
       R <- eg[i, ]
       delta_j <- R$delta_j
       delta_nj <- R$delta_nj
@@ -116,10 +135,17 @@ getPwr_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, f, pi, cut, alpha, N, 
       pi <- R$pi
       cut <- R$cut
       alpha <- R$alpha
+      beta <- R$beta
       N <- R$N
       r <- R$r
-      Nj <- N * f
       delta <- delta_j * f + delta_nj * (1 - f)
+      if (is.na(N)) {
+        N <- getN_Con_Equi(
+          delta, sigma, cut, alpha,
+          beta, NA, r
+        )$N
+      }
+      Nj <- N * f
       set.seed(i + seed)
       xt_j <- rnorm(n = Nj * r / (1 + r), mean = delta_j, sd = sigma)
       xc_j <- rnorm(n = Nj / (1 + r), mean = 0, sd = sigma)
@@ -138,14 +164,17 @@ getPwr_Con_Equi_JM1 <- function(delta_j, delta_nj, sigma, f, pi, cut, alpha, N, 
       data.frame(
         delta_j, delta_nj, delta,
         sigma, f, pi, cut,
-        alpha, N, r,
+        alpha, beta, N, r,
         succ_a, succ_j
       )
-    })
+    }, .progress = TRUE, .options = furrr_options(seed = TRUE))
+    if (numcore >= 2) {
+      plan(sequential)
+    }
     res <- ss %>%
       group_by(
         delta_j, delta_nj, delta, sigma,
-        f, pi, cut, alpha, N, r,
+        f, pi, cut, alpha, beta, N, r,
       ) %>%
       summarise(
         p1 = mean(succ_a),

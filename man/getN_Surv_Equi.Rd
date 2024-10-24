@@ -4,10 +4,10 @@
 \alias{getN_Surv_Equi}
 \title{Title}
 \usage{
-getN_Surv_Equi(delta, cut, alpha, beta, N, r, direct = 1)
+getN_Surv_Equi(delta, cut, alpha, beta, N, r, maxN = 1e+06)
 }
 \arguments{
-\item{direct}{}
+\item{maxN}{}
 }
 \description{
 Title

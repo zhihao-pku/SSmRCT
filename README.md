@@ -1,4 +1,11 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
 # SSmRCT
+
 Sample size allocation for mRCT
 
 ```R
@@ -12,7 +19,7 @@ rm(list = ls())
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 - Global Success Criteria
 
@@ -75,7 +82,7 @@ p1
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
@@ -194,7 +201,7 @@ p3
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
@@ -212,7 +219,7 @@ $$
 
 - Mean difference between experimental and positive-control groups for each region: `delta_i = c(1, 0.8)`;
 
-   Common standard deviation: `sigma = 4`.
+  Common standard deviation: `sigma = 4`.
 
 - Global sample size: `N = 200`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 
@@ -271,7 +278,7 @@ p4
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
@@ -289,7 +296,7 @@ $$
 
 - Mean difference between experimental and positive-control groups for each region: `delta_i = c(-0.5, 0)`;
 
-   Common standard deviation: `sigma = 4`.
+  Common standard deviation: `sigma = 4`.
 
 - Global sample size: `N = 200`; Sample size ratio between experimental and positive-control groups: `r = 1`.
 
@@ -348,7 +355,7 @@ p5
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
@@ -423,13 +430,13 @@ p6
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
-\hat \delta_a = \hat p_1 - \hat p_0 \\
+\hat \delta_a = \hat p_{1a} - \hat p_{0a} \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}}> \Phi^{-1}(1 - \alpha)
 \end{gather*}
 $$
@@ -492,13 +499,13 @@ p7
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
-\hat \delta_a = \hat p_1 - \hat p_0 \\
+\hat \delta_a = \hat p_{1a} - \hat p_{0a} \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 \end{gather*}
 $$
@@ -568,13 +575,13 @@ p8
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
-\hat \delta_a = \hat p_1 - \hat p_0 \\
+\hat \delta_a = \hat p_{1a} - \hat p_{0a} \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 \end{gather*}
 $$
@@ -642,13 +649,13 @@ p9
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
-\hat \delta_a =  \hat p_1 - \hat p_0 \\
+\hat \delta_a =  \hat p_{1a} - \hat p_{0a} \\
 Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 \end{gather*}
 $$
@@ -715,15 +722,16 @@ p10
 ![](https://zhihao-pku.oss-cn-beijing.aliyuncs.com/202410212241602.png)
 
 ## 11 Non-inferiority Design for Binary Endpoint Using Japanese Method 2
+
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
-\hat \delta_a =  \hat p_1 - \hat p_0 \\
+\hat \delta_a =  \hat p_{1a} - \hat p_{0a} \\
 Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
 \end{gather*}
 $$
@@ -796,13 +804,13 @@ p11
 
 ### Success Criteria
 
-*Using the High Priority Metric as an Example*
+_Using the High Priority Metric as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
-\hat \delta_a =  \hat p_1 - \hat p_0 \\
+\hat \delta_a =  \hat p_{1a} - \hat p_{0a} \\
 Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 \end{gather*}
 $$
@@ -875,7 +883,7 @@ p12
 
 ### Success Criteria
 
-*Using “the Smaller the HR, the Better” as an Example*
+_Using “the Smaller the HR, the Better” as an Example_
 
 criterion = 1
 
@@ -884,7 +892,7 @@ Global Success Criteria
 $$
 \begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
-Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 \end{gather*}
 $$
 
@@ -893,7 +901,7 @@ Target Region Consistency Criteria
 $$
 \begin{gather*}
 \hat \delta_j = log(\hat {HR_j}) \\
-\hat \delta_j - \pi\hat \delta_a \gt 0
+\hat \delta_j - \pi\hat \delta_a \lt 0
 \end{gather*}
 $$
 
@@ -904,7 +912,7 @@ Global Success Criteria
 $$
 \begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
-Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(\alpha)
 \end{gather*}
 $$
 
@@ -976,14 +984,14 @@ p13
 
 ### Success Criteria
 
-*Using “the Smaller the HR, the Better” as an Example*
+_Using “the Smaller the HR, the Better” as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
-Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+Z_a = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 \end{gather*}
 $$
 
@@ -992,7 +1000,7 @@ Target Region Consistency Criteria
 $$
 \begin{gather*}
 \hat \delta_j = log(\hat {HR_j}) \\
-\hat \delta_j - \hat \delta_a + \pi\Delta \gt 0
+\hat \delta_j - \hat \delta_a - \pi\Delta \lt 0
 \end{gather*}
 $$
 
@@ -1044,7 +1052,7 @@ p14
 
 ### Success Criteria
 
-*Using “the Smaller the HR, the Better” as an Example*
+_Using “the Smaller the HR, the Better” as an Example_
 
 Global Success Criteria
 
@@ -1110,14 +1118,14 @@ p15
 
 ### Success Criteria
 
-*Using “the Smaller the HR, the Better” as an Example*
+_Using “the Smaller the HR, the Better” as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
 \hat \delta_a = log(\hat HR_a) \\
-Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 \end{gather*}
 $$
 
@@ -1126,7 +1134,7 @@ Regional Consistency Criteria
 $$
 \begin{gather*}
 \hat \delta_i = log(\hat {HR_i}) \\
-\hat \delta_i > 0 \text{ for i = 1, 2, .., m}
+\hat \delta_i \lt 0 \text{ for i = 1, 2, .., m}
 \end{gather*}
 $$
 
@@ -1188,14 +1196,14 @@ p16
 
 ### Success Criteria
 
-*Using “the Smaller the HR, the Better” as an Example*
+_Using “the Smaller the HR, the Better” as an Example_
 
 Global Success Criteria
 
 $$
 \begin{gather*}
 \hat \delta_a = log(\hat {HR_a}) \\
-Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} \gt \Phi^{-1}(1 - \alpha)
+Z_a = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} \lt \Phi^{-1}(\alpha)
 \end{gather*}
 $$
 
@@ -1204,7 +1212,7 @@ Target Region Consistency Criteria
 $$
 \begin{gather*}
 \hat \delta_i = log(\hat {HR_i}) \\
-\hat \delta_i + \Delta\gt 0 \text{ for i = 1, 2, .., m}
+\hat \delta_i - \Delta\lt 0 \text{ for i = 1, 2, .., m}
 \end{gather*}
 $$
 
@@ -1266,7 +1274,7 @@ p17
 
 ### Success Criteria
 
-*Using “the Smaller the HR, the Better” as an Example*
+_Using “the Smaller the HR, the Better” as an Example_
 
 Global Success Criteria
 

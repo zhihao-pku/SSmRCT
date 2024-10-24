@@ -6,12 +6,13 @@
 #' @param f
 #' @param pi
 #' @param alpha
+#' @param beta
 #' @param N
 #' @param r
-#' @param direct
 #' @param sim
 #' @param nsim
 #' @param seed
+#' @param numcore
 #'
 #' @return
 #' @export
@@ -20,9 +21,14 @@
 #' getPwr_Con_Super_JM1(
 #'   delta_j = 0.5, delta_nj = 0.7, sigma = 1,
 #'   f = seq(0.1, 0.9, 0.1),
-#'   pi = 0.5, alpha = 0.025, N = 100, r = 1, direct = 1, sim = FALSE
+#'   pi = 0.5, alpha = 0.025, beta = NA, N = 100, r = 1, sim = FALSE
 #' )
-getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, direct = 1, sim = FALSE, nsim = 1000, seed = 0) {
+#' getPwr_Con_Super_JM1(
+#'   delta_j = 0.5, delta_nj = 0.7, sigma = 1,
+#'   f = seq(0.1, 0.9, 0.1),
+#'   pi = 0.5, alpha = 0.025, beta = 0.2, N = NA, r = 1, sim = FALSE
+#' )
+getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi = 0.5, alpha = 0.025, beta = NA, N, r = 1, sim = FALSE, nsim = 1000, seed = 0, numcore = 2) {
   if (!sim) {
     eg <- as.data.frame(expand.grid(
       delta_j = delta_j,
@@ -31,11 +37,11 @@ getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, d
       f = f,
       pi = pi,
       alpha = alpha,
+      beta = beta,
       N = N,
-      r = r,
-      direct = direct
+      r = r
     ))
-    res <- map_dfr(.x = 1:nrow(eg), .f = function(i) {
+    res <- future_map_dfr(.x = 1:nrow(eg), .f = function(i) {
       R <- eg[i, ]
       delta_j <- R$delta_j
       delta_nj <- R$delta_nj
@@ -43,12 +49,18 @@ getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, d
       f <- R$f
       pi <- R$pi
       alpha <- R$alpha
+      beta <- R$beta
       N <- R$N
       r <- R$r
-      direct <- R$direct
-      Nj <- N * f
       gr <- 2 + r + 1 / r
       delta <- delta_j * f + delta_nj * (1 - f)
+      if (is.na(N)) {
+        N <- getN_Con_Super(
+          delta, sigma, alpha,
+          beta, NA, r
+        )$N
+      }
+      Nj <- N * f
       sej <- sqrt(gr * sigma^2 / Nj +
         pi^2 * gr * sigma^2 / N -
         2 * pi * sqrt(f) *
@@ -60,7 +72,7 @@ getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, d
         pi * gr * sigma^2 / N
       corr <- cov / sqrt(sej * se)
       M <- matrix(c(1, corr, corr, 1), nrow = 2, byrow = T)
-      if (direct == -1) {
+      if (delta < 0) {
         uj <- (-1) * uj
         u <- (-1) * u
       }
@@ -86,10 +98,10 @@ getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, d
       data.frame(
         delta_j, delta_nj, delta,
         sigma, f, pi,
-        alpha, N, r, direct,
+        alpha, beta, N, r,
         p1, p2, p3, p4
       )
-    })
+    }, .options = furrr_options(seed = TRUE))
   }
   if (sim) {
     eg <- as.data.frame(expand.grid(
@@ -99,12 +111,15 @@ getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, d
       f = f,
       pi = pi,
       alpha = alpha,
+      beta = beta,
       N = N,
       r = r,
-      direct = direct,
       nsim = 1:nsim
     ))
-    ss <- map_dfr(.x = 1:nrow(eg), .f = function(i) {
+    if (numcore >= 2) {
+      plan(multisession, workers = numcore)
+    }
+    ss <- future_map_dfr(.x = 1:nrow(eg), .f = function(i) {
       R <- eg[i, ]
       delta_j <- R$delta_j
       delta_nj <- R$delta_nj
@@ -112,12 +127,18 @@ getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, d
       f <- R$f
       pi <- R$pi
       alpha <- R$alpha
+      beta <- R$beta
       N <- R$N
       r <- R$r
-      direct <- R$direct
-      Nj <- N * f
       gr <- 2 + r + 1 / r
       delta <- delta_j * f + delta_nj * (1 - f)
+      if (is.na(N)) {
+        N <- getN_Con_Super(
+          delta, sigma, alpha,
+          beta, NA, r
+        )$N
+      }
+      Nj <- N * f
       set.seed(i + seed)
       xt_j <- rnorm(n = Nj * r / (1 + r), mean = delta_j, sd = sigma)
       xc_j <- rnorm(n = Nj / (1 + r), mean = 0, sd = sigma)
@@ -128,7 +149,7 @@ getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, d
       za <- (mean(xt) - mean(xc)) /
         (sigma * sqrt(1 / length(xt) + 1 / length(xc)))
       zj <- mean(xt_j) - mean(xc_j) - pi * (mean(xt) - mean(xc))
-      if (direct == -1) {
+      if (delta < 0) {
         za <- (-1) * za
         zj <- (-1) * zj
       }
@@ -136,16 +157,18 @@ getPwr_Con_Super_JM1 <- function(delta_j, delta_nj, sigma, f, pi, alpha, N, r, d
       succ_j <- if_else(zj > 0, 1, 0)
       data.frame(
         delta_j, delta_nj, delta,
-        sigma, f, pi, alpha,
+        sigma, f, pi, alpha, beta,
         N, r,
-        direct,
         succ_a, succ_j
       )
-    })
+    }, .progress = TRUE, .options = furrr_options(seed = TRUE))
+    if (numcore >= 2) {
+      plan(sequential)
+    }
     res <- ss %>%
       group_by(
         delta_j, delta_nj, delta, sigma, f, pi, alpha,
-        N, r, direct
+        beta, N, r
       ) %>%
       summarise(
         p1 = mean(succ_a),

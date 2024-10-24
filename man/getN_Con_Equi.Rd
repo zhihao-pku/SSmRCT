@@ -4,20 +4,20 @@
 \alias{getN_Con_Equi}
 \title{Title}
 \usage{
-getN_Con_Equi(delta, sigma, cut, alpha, beta, N, r, direct = 1)
+getN_Con_Equi(delta, sigma, cut, alpha, beta, N, r, maxN = 1e+06)
 }
 \arguments{
-\item{direct}{}
+\item{maxN}{}
 }
 \description{
 Title
 }
 \examples{
-(v <- getN_Con_Noninf(
+(v <- getN_Con_Equi(
   delta = 0, sigma = 2, cut = 1, alpha = 0.025,
   beta = 0.2, N = NA, r = 1
 ))
-getN_Con_Noninf(
+getN_Con_Equi(
   delta = 0, sigma = 2, cut = 1, alpha = 0.025,
   beta = NA, N = v$N, r = 1
 )

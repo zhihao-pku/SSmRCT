@@ -4,10 +4,10 @@
 \alias{getN_Bin_Equi}
 \title{Title}
 \usage{
-getN_Bin_Equi(p1, p0, cut, alpha, beta, N, r, direct = 1)
+getN_Bin_Equi(p1, p0, cut, alpha, beta, N, r, maxN = 1e+06)
 }
 \arguments{
-\item{direct}{}
+\item{maxN}{}
 }
 \description{
 Title

@@ -6,7 +6,6 @@
 #' @param beta
 #' @param N
 #' @param r
-#' @param direct
 #'
 #' @return
 #' @export
@@ -20,15 +19,14 @@
 #'   p1 = 0.4, p0 = 0.2, alpha = 0.025,
 #'   beta = NA, N = v$N, r = 1
 #' )
-getN_Bin_Super <- function(p1, p0, alpha, beta, N, r, direct = 1) {
+getN_Bin_Super <- function(p1, p0, alpha, beta, N, r) {
   eg <- as.data.frame(expand.grid(
     p1 = p1,
     p0 = p0,
     alpha = alpha,
     beta = beta,
     N = N,
-    r = r,
-    direct = direct
+    r = r
   ))
   res <- map_dfr(.x = 1:nrow(eg), .f = function(i) {
     R <- eg[i, ]
@@ -38,7 +36,6 @@ getN_Bin_Super <- function(p1, p0, alpha, beta, N, r, direct = 1) {
     beta <- R$beta
     N <- R$N
     r <- R$r
-    direct <- R$direct
     delta <- p1 - p0
     p_pool <- p1 * r / (1 + r) + p0 / (1 + r)
     sigma <- sqrt(p_pool * (1 - p_pool))
@@ -56,7 +53,7 @@ getN_Bin_Super <- function(p1, p0, alpha, beta, N, r, direct = 1) {
       n2 <- N / (r + 1)
       n1 <- r * n2
       z <- delta / (sigma * sqrt(1 / n1 + 1 / n2))
-      pwr <- if_else(direct == 1,
+      pwr <- if_else(delta > 0,
         1 - pnorm(q = qnorm(1 - alpha), mean = z, sd = 1),
         pnorm(q = -qnorm(1 - alpha), mean = z, sd = 1)
       )

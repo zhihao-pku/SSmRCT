@@ -4,10 +4,10 @@
 \alias{getN_Surv_Super}
 \title{Title}
 \usage{
-getN_Surv_Super(delta, alpha, beta, N, r, direct = -1)
+getN_Surv_Super(delta, alpha, beta, N, r)
 }
 \arguments{
-\item{direct}{}
+\item{r}{}
 }
 \description{
 Title

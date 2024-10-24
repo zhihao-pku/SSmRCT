@@ -6,7 +6,7 @@
 #' @param beta
 #' @param N
 #' @param r
-#' @param direct
+#' @param maxN
 #'
 #' @return
 #' @export
@@ -20,15 +20,14 @@
 #'   delta = log(1.1), cut = log(1.2), alpha = 0.025,
 #'   beta = NA, N = v$N, r = 1
 #' )
-getN_Surv_Equi <- function(delta, cut, alpha, beta, N, r, direct = 1) {
+getN_Surv_Equi <- function(delta, cut, alpha, beta, N, r, maxN = 1e6) {
   eg <- as.data.frame(expand.grid(
     delta = delta,
     cut = cut,
     alpha = alpha,
     beta = beta,
     N = N,
-    r = r,
-    direct = direct
+    r = r
   ))
   res <- map_dfr(.x = 1:nrow(eg), .f = function(i) {
     R <- eg[i, ]
@@ -37,18 +36,22 @@ getN_Surv_Equi <- function(delta, cut, alpha, beta, N, r, direct = 1) {
     alpha <- R$alpha
     beta <- R$beta
     N <- R$N
-    r <- R$r
-    direct <- R$direct
     if (is.na(N)) {
-      n2 <- if_else(delta == 0,
-        (qnorm(1 - alpha) + qnorm(1 - beta / 2))^2 *
-          (1 + 1 / r) / (abs(delta) - cut)^2,
-        (qnorm(1 - alpha) + qnorm(1 - beta))^2 *
-          (1 + 1 / r) / (abs(delta) - cut)^2
-      )
-      n1 <- r * n2
-      n1 <- ceiling(n1)
-      n2 <- ceiling(n2)
+      getN <- function(N) {
+        n2 <- N / (r + 1)
+        n1 <- r * n2
+        z1 <- (delta + cut) / (sigma * sqrt(1 / n1 + 1 / n2))
+        z2 <- (delta - cut) / (sigma * sqrt(1 / n1 + 1 / n2))
+        pwr <- pmvnorm(
+          lower = c(qnorm(1 - alpha), -Inf),
+          upper = c(Inf, -qnorm(1 - alpha)),
+          mean = c(z1, z2),
+          sigma = matrix(1, nrow = 2, ncol = 2)
+        ) - (1 - beta)
+      }
+      N <- uniroot(f = getN, interval = c(1e-6, maxN))$root
+      n2 <- ceiling(N / (r + 1))
+      n1 <- ceiling(r * n2)
       N <- n1 + n2
       pwr <- 1 - beta
       df <- data.frame(delta, cut, alpha, beta, pwr, r, N, n1, n2)

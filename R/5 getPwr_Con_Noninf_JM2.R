@@ -3,7 +3,9 @@
 #' @param delta_i
 #' @param sigma
 #' @param fi
+#' @param cut
 #' @param alpha
+#' @param beta
 #' @param N
 #' @param r
 #' @param direct
@@ -21,17 +23,35 @@
 #'   res <- getPwr_Con_Noninf_JM2(
 #'     delta_i = c(-0.5, 0), sigma = 4,
 #'     fi = c(f, 1 - f), cut = 2,
-#'     alpha = 0.025, N = 200, r = 1, direct = 1, sim = FALSE
+#'     alpha = 0.025, beta = NA, N = 200, r = 1, direct = 1, sim = FALSE
 #'   )$overall
 #'   res$M <- "calc"
 #'   res$f <- f
 #'   res
 #' })
-getPwr_Con_Noninf_JM2 <- function(delta_i, sigma, fi, cut, alpha, N, r, direct = 1, sim = FALSE, nsim = 1000, seed = 0) {
+#' f_set <- seq(0.1, 0.9, 0.1)
+#' map_dfr(.x = 1:length(f_set), .f = function(i) {
+#'   f <- f_set[i]
+#'   res <- getPwr_Con_Noninf_JM2(
+#'     delta_i = c(-0.5, 0), sigma = 4,
+#'     fi = c(f, 1 - f), cut = 2,
+#'     alpha = 0.025, beta = 0.2, N = NA, r = 1, direct = 1, sim = FALSE
+#'   )$overall
+#'   res$M <- "calc"
+#'   res$f <- f
+#'   res
+#' })
+getPwr_Con_Noninf_JM2 <- function(delta_i, sigma, fi, cut, alpha = 0.025, beta = NA, N, r = 1, direct = 1, sim = FALSE, nsim = 1000, seed = 0) {
   if (!sim) {
-    Ni <- N * fi
     gr <- 2 + r + 1 / r
     delta <- sum(delta_i * fi)
+    if (is.na(N)) {
+      N <- getN_Con_Noninf(
+        delta, sigma, cut, alpha,
+        beta, NA, r
+      )$N
+    }
+    Ni <- N * fi
     num <- length(delta_i)
     sei <- sqrt(gr * sigma^2 / Ni)
     ui <- if_else(direct == rep(1, num),
@@ -60,7 +80,7 @@ getPwr_Con_Noninf_JM2 <- function(delta_i, sigma, fi, cut, alpha, N, r, direct =
     )
     p4 <- p3 / p1
     res <- data.frame(
-      delta = delta,
+      delta = delta, N = N,
       p1 = p1, p2 = p2, p3 = p3, p4 = p4
     )
     p_margin <- 1 - pnorm(q = 0, mean = ui, sd = 1)
@@ -83,9 +103,15 @@ getPwr_Con_Noninf_JM2 <- function(delta_i, sigma, fi, cut, alpha, N, r, direct =
     )
   }
   if (sim) {
-    Ni <- N * fi
     gr <- 2 + r + 1 / r
     delta <- sum(delta_i * fi)
+    if (is.na(N)) {
+      N <- getN_Con_Noninf(
+        delta, sigma, cut, alpha,
+        beta, NA, r
+      )$N
+    }
+    Ni <- N * fi
     num <- length(delta_i)
     da <- data.frame()
     di <- NULL
@@ -129,9 +155,10 @@ getPwr_Con_Noninf_JM2 <- function(delta_i, sigma, fi, cut, alpha, N, r, direct =
         p4 = mean(succ_i[succ_a == 1])
       ) %>%
       mutate(
-        delta = delta
+        delta = delta,
+        N = N
       ) %>%
-      select(delta, p1, p2, p3, p4)
+      select(delta, N, p1, p2, p3, p4)
     p_margin <- colMeans(di)
     p_joint <- c()
     for (k in 1:num) {

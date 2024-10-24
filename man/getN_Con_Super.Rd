@@ -4,10 +4,10 @@
 \alias{getN_Con_Super}
 \title{Title}
 \usage{
-getN_Con_Super(delta, sigma, alpha, beta, N, r, direct = 1)
+getN_Con_Super(delta, sigma, alpha, beta, N, r)
 }
 \arguments{
-\item{direct}{}
+\item{r}{}
 }
 \description{
 Title

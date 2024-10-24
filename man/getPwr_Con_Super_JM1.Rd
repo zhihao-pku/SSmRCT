@@ -9,18 +9,19 @@ getPwr_Con_Super_JM1(
   delta_nj,
   sigma,
   f,
-  pi,
-  alpha,
+  pi = 0.5,
+  alpha = 0.025,
+  beta = NA,
   N,
-  r,
-  direct = 1,
+  r = 1,
   sim = FALSE,
   nsim = 1000,
-  seed = 0
+  seed = 0,
+  numcore = 2
 )
 }
 \arguments{
-\item{seed}{}
+\item{numcore}{}
 }
 \description{
 Title
@@ -29,6 +30,11 @@ Title
 getPwr_Con_Super_JM1(
   delta_j = 0.5, delta_nj = 0.7, sigma = 1,
   f = seq(0.1, 0.9, 0.1),
-  pi = 0.5, alpha = 0.025, N = 100, r = 1, direct = 1, sim = FALSE
+  pi = 0.5, alpha = 0.025, beta = NA, N = 100, r = 1, sim = FALSE
+)
+getPwr_Con_Super_JM1(
+  delta_j = 0.5, delta_nj = 0.7, sigma = 1,
+  f = seq(0.1, 0.9, 0.1),
+  pi = 0.5, alpha = 0.025, beta = 0.2, N = NA, r = 1, sim = FALSE
 )
 }

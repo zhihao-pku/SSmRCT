@@ -9,9 +9,10 @@ getPwr_Con_Noninf_JM2(
   sigma,
   fi,
   cut,
-  alpha,
+  alpha = 0.025,
+  beta = NA,
   N,
-  r,
+  r = 1,
   direct = 1,
   sim = FALSE,
   nsim = 1000,
@@ -31,7 +32,19 @@ map_dfr(.x = 1:length(f_set), .f = function(i) {
   res <- getPwr_Con_Noninf_JM2(
     delta_i = c(-0.5, 0), sigma = 4,
     fi = c(f, 1 - f), cut = 2,
-    alpha = 0.025, N = 200, r = 1, direct = 1, sim = FALSE
+    alpha = 0.025, beta = NA, N = 200, r = 1, direct = 1, sim = FALSE
+  )$overall
+  res$M <- "calc"
+  res$f <- f
+  res
+})
+f_set <- seq(0.1, 0.9, 0.1)
+map_dfr(.x = 1:length(f_set), .f = function(i) {
+  f <- f_set[i]
+  res <- getPwr_Con_Noninf_JM2(
+    delta_i = c(-0.5, 0), sigma = 4,
+    fi = c(f, 1 - f), cut = 2,
+    alpha = 0.025, beta = 0.2, N = NA, r = 1, direct = 1, sim = FALSE
   )$overall
   res$M <- "calc"
   res$f <- f
