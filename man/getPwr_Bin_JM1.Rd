@@ -24,7 +24,7 @@ getPwr_Bin_Super_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2
 )
 
 getPwr_Bin_Noninf_JM1(
@@ -46,7 +46,7 @@ getPwr_Bin_Noninf_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2
 )
 
 getPwr_Bin_Equi_JM1(
@@ -67,35 +67,36 @@ getPwr_Bin_Equi_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2,
+  maxN = 1e+06
 )
 }
 \arguments{
-\item{p1_j}{Rate of treatment group in target region.}
+\item{p1_j}{A vector. Rate of treatment group in target region.}
 
-\item{p0_j}{Rate of control group in target region.}
+\item{p0_j}{A vector. Rate of control group in target region.}
 
-\item{p1_nj}{Rate of treatment group in other regions. When \code{p1_nj} is not \code{NA}, \code{p1_a} will be calculated automatically.}
+\item{p1_nj}{A vector. Rate of treatment group in other regions. When \code{p1_nj} is not \code{NA}, \code{p1_a} will be calculated automatically.}
 
-\item{p0_nj}{Rate of control group in other regions. When \code{p0_nj} is not \code{NA}, \code{p0_a} will be calculated automatically.}
+\item{p0_nj}{A vector. Rate of control group in other regions. When \code{p0_nj} is not \code{NA}, \code{p0_a} will be calculated automatically.}
 
-\item{p1_a}{Rate of treatment group globally.}
+\item{p1_a}{A vector. Rate of treatment group globally.}
 
-\item{p0_a}{Rate of the control group globally.}
+\item{p0_a}{A vector. Rate of the control group globally.}
 
-\item{f}{Proportion of sample size allocated to target region.}
+\item{f}{A vector. Proportion of sample size allocated to target region.}
 
-\item{pi}{Proportion of global efficacy to retain. The default value is 0.5, which means retaining half of the efficacy.}
+\item{pi}{A vector. Proportion of global efficacy to retain. Default value is 0.5, which means retaining half of the efficacy.}
 
-\item{alpha}{One-sided type I error rate for global success. The default value is 0.025.}
+\item{alpha}{A vector. One-sided type I error rate for global success. Default value is 0.025.}
 
-\item{beta}{Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
+\item{beta}{A vector. Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
 
-\item{N}{Global sample size. When N is \code{NA} and \code{alpha} and \code{beta} are not \code{NA}, \code{N} will be calculated automatically.}
+\item{N}{A vector. Global sample size. When N is \code{NA} and \code{alpha} and \code{beta} are not \code{NA}, \code{N} will be calculated automatically.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{A vector. Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
-\item{scale}{Optional values are "RD" for rate difference, "RR" for relative risk, and "OR" for odds ratio. Default value is "RD".}
+\item{scale}{A vector. Optional values are "RD" for rate difference, "RR" for relative risk, and "OR" for odds ratio. Default value is "RD".}
 
 \item{sim}{Logical value. When set to \code{FALSE}, theoretical calculation is performed. When set to \code{TRUE}, simulation is used, which is more time-consuming.}
 
@@ -103,11 +104,13 @@ getPwr_Bin_Equi_JM1(
 
 \item{seed}{Random seed for simulation.}
 
-\item{numcore}{Number of CPU cores to use during simulation.}
+\item{numcore}{Number of CPU cores to use during simulation. Default value is 2.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin. For RD, the margin is on the original scale. For RR and OR, the margin is on the log scale. For example, if the non-inferiority margins for RD, RR, OR are 0.2, 0.6, and 1.3, then the \code{cut = 0.2}, \code{cut = -log(0.6)}, and \code{cut = log(1.3)}, respectively.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin. For RD, the margin is on the original scale. For RR and OR, the margin is on the log scale. For example, if the non-inferiority margins for RD, RR, OR are 0.2, 0.6, and 1.3, then the \code{cut = 0.2}, \code{cut = -log(0.6)}, and \code{cut = log(1.3)}, respectively.}
 
-\item{direct}{If \code{direct = 1}, larger values of RD/RR/OR are preferable. If \code{direct = -1}, smaller values of RD/RR/OR are preferable.}
+\item{direct}{If \code{direct = 1}, larger values of RD, RR, and OR are preferable. If \code{direct = -1}, smaller values of RD, RR, and OR are preferable.}
+
+\item{maxN}{Maximum possible global sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame containing input parameters and returned power.
@@ -122,7 +125,7 @@ A data frame containing input parameters and returned power.
 Based on Japan's Method 1, given the global and target region sample sizes, calculate and simulate the marginal probabilities, conditional probabilities, and joint probabilities of global success and efficacy consistency between target region and globally, in clinical trials using superiority, non-inferiority, and equivalence designs with binary endpoints.
 }
 \details{
-Taking the larger RD/RR/OR is preferable as an example. The global success criterion and the efficacy consistency criterion between target region and globally
+Taking the larger RD, RR, and OR are preferable as an example. The global success criterion and the efficacy consistency criterion between target region and globally
 
 in superiority design:
 \deqn{Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}}> \Phi^{-1}(1 - \alpha)}
@@ -145,7 +148,7 @@ getPwr_Bin_Super_JM1(
 )
 
 # p1_a and p0_a will be calculated based on p1_j and p1_nj, p0_j and p0_nj, respectively.
-# Global sample size will be calculated based on beta.
+# Global sample size will be calculated based on alpha and beta.
 getPwr_Bin_Noninf_JM1(
   p1_j = 0.6, p0_j = 0.5, p1_nj = 0.5, p0_nj = 0.5, f = seq(0.1, 0.9, 0.1),
   pi = 0.5, cut = log(1.4),

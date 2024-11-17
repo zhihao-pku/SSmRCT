@@ -14,7 +14,9 @@ getPwr_Count_Super_JM1(
   lambda0_j,
   lambda0_nj = NA,
   lambda0_a = NA,
-  t,
+  t_j,
+  t_nj = NA,
+  t_a = NA,
   k = 0,
   f,
   pi = 0.5,
@@ -25,7 +27,7 @@ getPwr_Count_Super_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2
 )
 
 getPwr_Count_Noninf_JM1(
@@ -35,7 +37,9 @@ getPwr_Count_Noninf_JM1(
   lambda0_j,
   lambda0_nj = NA,
   lambda0_a = NA,
-  t,
+  t_j,
+  t_nj = NA,
+  t_a = NA,
   k = 0,
   f,
   pi = 0.5,
@@ -48,7 +52,7 @@ getPwr_Count_Noninf_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2
 )
 
 getPwr_Count_Equi_JM1(
@@ -58,7 +62,9 @@ getPwr_Count_Equi_JM1(
   lambda0_j,
   lambda0_nj = NA,
   lambda0_a = NA,
-  t,
+  t_j,
+  t_nj = NA,
+  t_a = NA,
   k = 0,
   f,
   pi = 0.5,
@@ -70,37 +76,42 @@ getPwr_Count_Equi_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2,
+  maxN = 1e+06
 )
 }
 \arguments{
-\item{delta_j}{log(RR) between treatment and control groups for target region.}
+\item{delta_j}{A vector. log(RR) between treatment and control groups for target region.}
 
-\item{delta_nj}{log(RR) between treatment and control groups for other regions. When \code{delta_nj} is not \code{NA}, \code{delta_a} will be calculated automatically.}
+\item{delta_nj}{A vector. log(RR) between treatment and control groups for other regions. When \code{delta_nj} is not \code{NA}, \code{delta_a} will be calculated automatically.}
 
-\item{delta_a}{log(RR) between treatment and control groups globally.}
+\item{delta_a}{A vector. log(RR) between treatment and control groups globally.}
 
-\item{lambda0_j}{Baseline hazard of control group for target region.}
+\item{lambda0_j}{A vector. Baseline hazard of control group for target region.}
 
-\item{lambda0_nj}{Baseline hazard of control group for other regions. When \code{lambda0_nj} is not \code{NA}, \code{lambda0_a} will be calculated automatically.}
+\item{lambda0_nj}{A vector. Baseline hazard of control group for other regions. When \code{lambda0_nj} is not \code{NA}, \code{lambda0_a} will be calculated automatically.}
 
-\item{lambda0_a}{Baseline hazard of control group globally.}
+\item{lambda0_a}{A vector. Baseline hazard of control group globally.}
 
-\item{t}{Average exposure time.}
+\item{t_j}{A vector. Average exposure time for target region.}
 
-\item{k}{The over-dispersion parameter for negative binomial distribution, which is 0 for poisson distribution.}
+\item{t_nj}{A vector. Average exposure time for other regions.}
 
-\item{f}{Proportion of sample size allocated to target region.}
+\item{t_a}{A vector. Average exposure time globally.}
 
-\item{pi}{Proportion of global efficacy to retain. The default value is 0.5, which means retaining half of the efficacy.}
+\item{k}{A vector. The over-dispersion parameter (k > 0) for negative binomial distribution, which is 0 for poisson distribution.}
 
-\item{alpha}{One-sided type I error rate for global success. The default value is 0.025.}
+\item{f}{A vector. Proportion of sample size allocated to target region.}
 
-\item{beta}{Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
+\item{pi}{A vector. Proportion of global efficacy to retain. Default value is 0.5, which means retaining half of the efficacy.}
 
-\item{N}{Global sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, \code{N} will be calculated automatically.}
+\item{alpha}{A vector. One-sided type I error rate for global success. Default value is 0.025.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{beta}{A vector. Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
+
+\item{N}{A vector. Global sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, \code{N} will be calculated automatically.}
+
+\item{r}{A vector. Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
 \item{sim}{Logical value. When set to \code{FALSE}, theoretical calculation is performed. When set to \code{TRUE}, simulation is used, which is more time-consuming.}
 
@@ -108,11 +119,13 @@ getPwr_Count_Equi_JM1(
 
 \item{seed}{Random seed for simulation.}
 
-\item{numcore}{Number of CPU cores to use during simulation.}
+\item{numcore}{Number of CPU cores to use during simulation. Default value is 2.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin. For example, if the non-inferiority margin for RR is 0.6, then \code{cut = -log(0.6)}. If the non-inferiority margin for RR is 1.3, then \code{cut = log(1.3)}.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin. For example, if the non-inferiority margin for RR is 0.6, then \code{cut = -log(0.6)}. If the non-inferiority margin for RR is 1.3, then \code{cut = log(1.3)}.}
 
 \item{direct}{\code{direct = 1} indicates that a larger RR is preferable, while \code{direct = -1} indicates that a smaller RR is preferable.}
+
+\item{maxN}{Maximum possible global sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame containing input parameters and returned power.
@@ -147,7 +160,7 @@ Where \eqn{\hat \delta = log(\hat {RR})} between treatment and control groups, a
 getPwr_Count_Super_JM1(
   delta_j = log(1.2),
   delta_a = log(1.3),
-  lambda0_j = 0.1, lambda0_a = 0.1, t = 5, k = 0, f = seq(0.1, 0.9, 0.1),
+  lambda0_j = 0.1, lambda0_a = 0.1, t_j = 5, t_a = 5, k = 0, f = seq(0.1, 0.9, 0.1),
   pi = 0.5, alpha = 0.025, beta = NA, N = 300, r = 1, sim = FALSE
 )
 
@@ -157,7 +170,7 @@ getPwr_Count_Super_JM1(
 getPwr_Count_Noninf_JM1(
   delta_j = log(1.1),
   delta_nj = log(1.0),
-  lambda0_j = 0.1, lambda0_nj = 0.1, t = 5, k = 0, f = seq(0.1, 0.9, 0.1),
+  lambda0_j = 0.1, lambda0_nj = 0.1, t_j = 5, t_nj = 5, k = 0, f = seq(0.1, 0.9, 0.1),
   pi = 0.5, cut = log(1.3),
   alpha = 0.025, beta = 0.2, N = NA, r = 1, direct = -1, sim = FALSE
 )

@@ -10,7 +10,7 @@
 getPwr_Con_Super_JM2(
   delta_i,
   sigma,
-  fi,
+  f_i,
   alpha = 0.025,
   beta = NA,
   N = NA,
@@ -23,8 +23,9 @@ getPwr_Con_Super_JM2(
 getPwr_Con_Noninf_JM2(
   delta_i,
   sigma,
-  fi,
+  f_i,
   cut,
+  cut_i = NA,
   alpha = 0.025,
   beta = NA,
   N = NA,
@@ -38,31 +39,33 @@ getPwr_Con_Noninf_JM2(
 getPwr_Con_Equi_JM2(
   delta_i,
   sigma,
-  fi,
+  f_i,
   cut,
+  cut_i = NA,
   alpha = 0.025,
   beta = NA,
   N = NA,
   r = 1,
   sim = FALSE,
   nsim = 1000,
-  seed = 0
+  seed = 0,
+  maxN = 1e+06
 )
 }
 \arguments{
-\item{delta_i}{A vector. Mean difference between treatment and control groups in each region.}
+\item{delta_i}{A vector with length equal to number of regions. Mean difference between treatment and control groups in each region.}
 
 \item{sigma}{Common standard deviation.}
 
-\item{fi}{A vector. Proportion of sample size allocated to each region.}
+\item{f_i}{A vector with length equal to number of regions. Proportion of sample size allocated to each region.}
 
-\item{alpha}{One-sided type I error rate for global success. The default value is 0.025.}
+\item{alpha}{One-sided type I error rate for global success. Default value is 0.025.}
 
 \item{beta}{Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
 
 \item{N}{Global sample size. Global sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, \code{N} will be calculated automatically.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
 \item{sim}{Logical value. When set to \code{FALSE}, theoretical calculation is performed. When set to \code{TRUE}, simulation is used, which is more time-consuming.}
 
@@ -70,9 +73,13 @@ getPwr_Con_Equi_JM2(
 
 \item{seed}{Random seed for simulation.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin.}
+\item{cut}{A positive value for non-inferiority or equivalence margin in global trial, and this margin is also used in the ith region when the ith element of cut_i is \code{NA}.}
+
+\item{cut_i}{A vector with length equal to number of regions. Positive value for non-inferiority or equivalence margin in each region. When \code{cut_i = NA} (default), globally margin will be used for each region.}
 
 \item{direct}{\code{direct = 1} indicates that a larger mean difference is preferable, while \code{direct = -1} indicates that a smaller mean difference is preferable.}
+
+\item{maxN}{Maximum possible global sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A list where:
@@ -85,6 +92,7 @@ A list where:
       \item{\code{pwr4 }}{The joint probability of global success and all region's efficacy being consistent with the global efficacy.}
     }
   }
+  \item{\code{cut_i }}{The non-inferiority or equivalence margin in each region (\code{cut_i}).}
   \item{\code{pwr_margin }}{The marginal probability that the ith region efficacy is consistent with the global efficacy.}
   \item{\code{pwr_condition }}{The conditional probability that the ith region efficacy is consistent with the global efficacy given global success.}
   \item{\code{pwr_joint }}{The joint probability of global success and the ith region efficacy being consistent with the global efficacy.}
@@ -102,46 +110,28 @@ in superiority design:
 
 in non-inferiority design:
 \deqn{Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} > \Phi^{-1}(1 - \alpha)}
-\deqn{\hat \delta_i + \Delta> 0 \text{ for i = 1, 2, .., m}}
+\deqn{\hat \delta_i + \Delta_i > 0 \text{ for i = 1, 2, .., m}}
 
 in equivalence design:
 \deqn{Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} > \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} < \Phi^{-1}(\alpha)}
-\deqn{\hat \delta_i + \Delta> 0 \text{ and } \hat \delta_i - \Delta < 0 \text{ for i = 1, 2, .., m}}
+\deqn{\hat \delta_i + \Delta_i > 0 \text{ and } \hat \delta_i - \Delta_i < 0 \text{ for i = 1, 2, .., m}}
 
-Where \eqn{\hat \delta} is the mean difference between treatment and control groups, and \eqn{\Delta} is the non-inferiority or equivalence margin.
+Where \eqn{\hat \delta} is the mean difference between treatment and control groups, and \eqn{\Delta} and \eqn{\Delta_i} are the non-inferiority or equivalence margins in global trial (\code{cut}) and each region (\code{cut_i}), respectively.
 }
 \examples{
-f_set <- seq(0.1, 0.9, 0.1)
-map_dfr(
-  .x = 1:length(f_set),
-  .f = function(i) {
-    f <- f_set[i]
-    res <- getPwr_Con_Super_JM2(
-      delta_i = c(1, 0.8),
-      sigma = 4, fi = c(f, 1 - f),
-      alpha = 0.025, beta = NA, N = 200, r = 1, sim = FALSE
-    )$overall
-    res$f <- f
-    res
-  }
+getPwr_Con_Super_JM2(
+  delta_i = c(1, 0.8),
+  sigma = 4, f_i = c(0.5, 0.5),
+  alpha = 0.025, beta = NA, N = 200, r = 1, sim = FALSE
 )
 
-# Global mean difference will be calculated based on delta_i and fi.
-# Global sample size will be calculated based on beta.
-f_set <- seq(0.1, 0.9, 0.1)
-map_dfr(
-  .x = 1:length(f_set),
-  .f = function(i) {
-    f <- f_set[i]
-    res <- getPwr_Con_Noninf_JM2(
-      delta_i = c(1, 0),
-      sigma = 4, fi = c(f, 1 - f),
-      cut = 2, alpha = 0.025, beta = 0.2, N = NA, r = 1, direct = -1,
-      sim = FALSE
-    )$overall
-    res$f <- f
-    res
-  }
+# Global mean difference will be calculated based on delta_i and f_i.
+# Non-inferiority margin in global trial and each region is 2.
+# Global sample size will be calculated based on alpha and beta.
+getPwr_Con_Noninf_JM2(
+  delta_i = c(1, 0),
+  sigma = 4, f_i = c(0.5, 0.5),
+  cut = 2, alpha = 0.025, beta = 0.2, N = NA, r = 1, direct = -1, sim = FALSE
 )
 }
 \references{

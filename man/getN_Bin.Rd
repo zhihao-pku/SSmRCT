@@ -34,34 +34,34 @@ getN_Bin_Equi(
 )
 }
 \arguments{
-\item{p1}{Rate of treatment group.}
+\item{p1}{A vector. Rate of treatment group.}
 
-\item{p0}{Rate of control group.}
+\item{p0}{A vector. Rate of control group.}
 
-\item{alpha}{One-sided type I error rate. The default value is 0.025.}
+\item{alpha}{A vector. One-sided type I error rate. Default value is 0.025.}
 
-\item{beta}{Type II error rate. When \code{beta} is \code{NA} and \code{N} is not \code{NA}, the power will be returned.}
+\item{beta}{A vector. Type II error rate. When \code{beta} is \code{NA} and \code{N} is not \code{NA}, the power will be returned.}
 
-\item{N}{Sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, the sample size will be returned.}
+\item{N}{A vector. Sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, the sample size will be returned.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{A vector. Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
-\item{scale}{Optional values are "RD" for rate difference, "RR" for relative risk, and "OR" for odds ratio. Default value is "RD".}
+\item{scale}{A vector. Optional values are "RD" for rate difference, "RR" for relative risk, and "OR" for odds ratio. Default value is "RD".}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin. For RD, the margin is on the original scale. For RR and OR, the margin is on the log scale. For example, if the non-inferiority margins for RD, RR, OR are 0.2, 0.6, and 1.3, then the \code{cut = 0.2}, \code{cut = -log(0.6)}, and \code{cut = log(1.3)}, respectively.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin. For RD, the margin is on the original scale. For RR and OR, the margin is on the log scale. For example, if the non-inferiority margins for RD, RR, OR are 0.2, 0.6, and 1.3, then the \code{cut = 0.2}, \code{cut = -log(0.6)}, and \code{cut = log(1.3)}, respectively.}
 
-\item{direct}{If \code{direct = 1}, larger values of RD/RR/OR are preferable. If \code{direct = -1}, smaller values of RD/RR/OR are preferable.}
+\item{direct}{If \code{direct = 1}, larger values of RD, RR, and OR are preferable. If \code{direct = -1}, smaller values of RD, RR, and OR are preferable.}
 
-\item{maxN}{Maximum possible sample size(\code{N}) in equivalence design. Default value is 1e6.}
+\item{maxN}{Maximum possible sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame containing input parameters and returned sample size or power.
 }
 \description{
-Calculating sample size when given power or power when given sample size for binary endpoints.
+Calculating required sample size when given power or power when given sample size for binary endpoints.
 }
 \details{
-Taking the larger RD/RR/OR is preferable as an example. Sample size calculation is based on the following Z test, with the success criterion:
+Taking the larger RD, RR, and OR are preferable as an example. Sample size calculation is based on the following Z test, with the success criterion:
 
 in superiority design:
 \deqn{Z = \frac{\hat \delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}} > \Phi^{-1}(1 - \alpha)}
@@ -72,7 +72,7 @@ in non-inferiority design:
 in equivalence design:
 \deqn{Z_u = \frac{\hat \delta + \Delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}} > \Phi^{-1}(1 - \alpha)\text{ and } Z_l = \frac{\hat \delta - \Delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}} < \Phi^{-1}(\alpha)}
 
-Where \eqn{\hat \delta = \hat p_1 - \hat p_0, \hat \sigma_0^2 = \hat p_0(1 - \hat p_0), \hat \sigma_1^2 = \hat p_1(1 - \hat p_1)} for RD; \eqn{\hat \delta = log(\frac{\hat p_1}{\hat p_0}), \hat \sigma_0^2 = \frac{(1 - \hat p_0)}{\hat p_0}, \hat \sigma_1^2 = \frac{(1 - \hat p_1)}{\hat p_1}} for RR; \eqn{\hat \delta = log(\frac{\hat p_1 / (1 - \hat p_1)}{\hat p_0 / (1 - \hat p_0)}, \hat \sigma_0^2 = \frac{1}{\hat p_0(1 - \hat p_0)}), \hat \sigma_1^2 = \frac{1}{\hat p_1(1 - \hat p_1)}} for OR; and \eqn{\Delta} is the non-inferiority or equivalence margin.
+Where \eqn{\hat \delta = \hat p_1 - \hat p_0, \hat \sigma_0^2 = \hat p_0(1 - \hat p_0), \hat \sigma_1^2 = \hat p_1(1 - \hat p_1)} for RD; \eqn{\hat \delta = log(\frac{\hat p_1}{\hat p_0}), \hat \sigma_0^2 = \frac{(1 - \hat p_0)}{\hat p_0}, \hat \sigma_1^2 = \frac{(1 - \hat p_1)}{\hat p_1}} for RR; \eqn{\hat \delta = log(\frac{\hat p_1 / (1 - \hat p_1)}{\hat p_0 / (1 - \hat p_0)}), \hat \sigma_0^2 = \frac{1}{\hat p_0(1 - \hat p_0)}, \hat \sigma_1^2 = \frac{1}{\hat p_1(1 - \hat p_1)}} for OR; and \eqn{\Delta} is the non-inferiority or equivalence margin (\code{cut}).
 }
 \examples{
 (v <- getN_Bin_Super(

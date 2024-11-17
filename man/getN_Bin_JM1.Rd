@@ -54,33 +54,33 @@ getN_Bin_Equi_JM1(
 )
 }
 \arguments{
-\item{p1_a}{Rate of treatment group globally.}
+\item{p1_a}{A vector. Rate of treatment group globally.}
 
-\item{p0_a}{Rate of the control group globally.}
+\item{p0_a}{A vector. Rate of the control group globally.}
 
-\item{p1_j}{Rate of treatment group in target region.}
+\item{p1_j}{A vector. Rate of treatment group in target region.}
 
-\item{p0_j}{Rate of control group in target region.}
+\item{p0_j}{A vector. Rate of control group in target region.}
 
-\item{pi}{Proportion of global efficacy to retain. The default value is 0.5, which means retaining half of the efficacy.}
+\item{pi}{A vector. Proportion of global efficacy to retain. Default value is 0.5, which means retaining half of the efficacy.}
 
-\item{alpha}{One-sided type I error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}. The default value is 0.025.}
+\item{alpha}{A vector. One-sided type I error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}. Default value is 0.025.}
 
-\item{beta}{Type II error rate for global success, which is used to calculate global sample size only when \code{N} is missing.}
+\item{beta}{A vector. Type II error rate for global success, which is used to calculate global sample size only when \code{N} is missing.}
 
-\item{beta1}{Type II error rate for efficacy consistency between target region and globally. The default value is 0.2.}
+\item{beta1}{A vector. Type II error rate for efficacy consistency between target region and globally. Default value is 0.2.}
 
-\item{N}{Global sample size. When \code{N} is \code{NA} and \code{alpha} and \code{beta} are not \code{NAs}, \code{N} will be calculated automatically.}
+\item{N}{A vector. Global sample size. When \code{N} is \code{NA} and \code{alpha} and \code{beta} are not \code{NA}, \code{N} will be calculated automatically.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{A vector. Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
-\item{scale}{Optional values are "RD" for rate difference, "RR" for relative risk, and "OR" for odds ratio. Default value is "RD".}
+\item{scale}{A vector. Optional values are "RD" for rate difference, "RR" for relative risk, and "OR" for odds ratio. Default value is "RD".}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin. For RD, the margin is on the original scale. For RR and OR, the margin is on the log scale. For example, if the non-inferiority margins for RD, RR, OR are 0.2, 0.6, and 1.3, then the \code{cut = 0.2}, \code{cut = -log(0.6)}, and \code{cut = log(1.3)}, respectively.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin. For RD, the margin is on the original scale. For RR and OR, the margin is on the log scale. For example, if the non-inferiority margins for RD, RR, OR are 0.2, 0.6, and 1.3, then the \code{cut = 0.2}, \code{cut = -log(0.6)}, and \code{cut = log(1.3)}, respectively.}
 
-\item{direct}{If \code{direct = 1}, larger values of RD/RR/OR are preferable. If \code{direct = -1}, smaller values of RD/RR/OR are preferable.}
+\item{direct}{If \code{direct = 1}, larger values of RD, RR, and OR are preferable. If \code{direct = -1}, smaller values of RD, RR, and OR are preferable.}
 
-\item{maxN}{Maximum possible sample size (\code{N}) in equivalence design. Default value is 1e6.}
+\item{maxN}{Maximum possible sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame where \code{f} is required proportion of sample size allocated to the target region, and \code{Nj} is required sample size for the target region, calculated as \code{Nj = N * f}.
@@ -97,6 +97,7 @@ getN_Bin_Super_JM1(
   N = 200, r = 1, scale = "RD"
 )
 
+# Global sample size will be calculated based on alpha and beta.
 getN_Bin_Noninf_JM1(
   p1_a = 0.5, p0_a = 0.5, p1_j = 0.6, p0_j = 0.5, pi = 0.5, cut = log(1.6),
   alpha = 0.025, beta = 0.2, beta1 = 0.2, N = NA, r = 1, scale = "RR",

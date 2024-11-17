@@ -45,47 +45,47 @@ getN_Count_Equi(
 )
 }
 \arguments{
-\item{delta}{log(RR) between treatment and control groups.}
+\item{delta}{A vector. log(RR) between treatment and control groups.}
 
-\item{lambda0}{Baseline hazard of control group.}
+\item{lambda0}{A vector. Baseline hazard of control group.}
 
-\item{t}{Average exposure time.}
+\item{t}{A vector. Average exposure time.}
 
-\item{k}{The over-dispersion parameter for negative binomial distribution, which is 0 for poisson distribution. The default value is 0.}
+\item{k}{A vector. The over-dispersion parameter (k > 0) for negative binomial distribution, which is 0 for poisson distribution. Default value is 0.}
 
-\item{alpha}{One-sided type I error rate. The default value is 0.025.}
+\item{alpha}{A vector. One-sided type I error rate. Default value is 0.025.}
 
-\item{beta}{Type II error rate. When \code{beta} is \code{NA} and \code{N} is not \code{NA}, the power will be returned.}
+\item{beta}{A vector. Type II error rate. When \code{beta} is \code{NA} and \code{N} is not \code{NA}, the power will be returned.}
 
-\item{N}{Sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, the sample size will be returned.}
+\item{N}{A vector. Sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, the sample size will be returned.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{A vector. Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin. For example, if the non-inferiority margin for RR is 0.6, then \code{cut = -log(0.6)}. If the non-inferiority margin for RR is 1.3, then \code{cut = log(1.3)}.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin. For example, if the non-inferiority margin for RR is 0.6, then \code{cut = -log(0.6)}. If the non-inferiority margin for RR is 1.3, then \code{cut = log(1.3)}.}
 
 \item{direct}{\code{direct = 1} indicates that a larger RR is preferable, while \code{direct = -1} indicates that a smaller RR is preferable.}
 
-\item{maxN}{Maximum possible sample size(\code{N}) in equivalence design. Default value is 1e6.}
+\item{maxN}{Maximum possible sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame containing input parameters and returned sample size or power.
 }
 \description{
-Calculating sample size when given power or power when given sample size for count endpoints.
+Calculating required sample size when given power or power when given sample size for count endpoints.
 }
 \details{
 Taking the larger RR is preferable as an example. Sample size calculation is based on the following Z test, with the success criterion:
 
 in superiority design:
-\deqn{Z = \frac{\hat \delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}}  \Phi^{-1}(1 - \alpha)}
+\deqn{Z = \frac{\hat \delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}} > \Phi^{-1}(1 - \alpha)}
 
 in non-inferiority design:
-\deqn{Z = \frac{\hat \delta + \Delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}}  \Phi^{-1}(1 - \alpha)}
+\deqn{Z = \frac{\hat \delta + \Delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}} > \Phi^{-1}(1 - \alpha)}
 
 in equivalence design:
-\deqn{Z_u = \frac{\hat \delta + \Delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}}  \Phi^{-1}(1 - \alpha)\text{ and } Z_l = \frac{\hat \delta - \Delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}} < \Phi^{-1}(\alpha)}
+\deqn{Z_u = \frac{\hat \delta + \Delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}} > \Phi^{-1}(1 - \alpha)\text{ and } Z_l = \frac{\hat \delta - \Delta}{\sqrt{\frac{\hat \sigma_0^2}{N / (r + 1)} + \frac{\hat \sigma_1^2}{Nr / (r + 1)}}} < \Phi^{-1}(\alpha)}
 
-Where \eqn{\hat \delta = log(\hat{RR})} between treatment and control groups, \eqn{\hat \sigma_0^2 = \frac{1}{\hat \lambda_0t} + \hat k, \sigma_1^2 = \frac{1}{e^{\hat \delta}\hat \lambda_0t} + \hat k}, and \eqn{\Delta} is the non-inferiority or equivalence margin (\code{cut}).
+Where \eqn{\hat \delta = log(\hat{RR})} between treatment and control groups, \eqn{\hat \sigma_0^2 = \frac{1}{\hat \lambda_0 t} + \hat k, \sigma_1^2 = \frac{1}{e^{\hat \delta}\hat \lambda_0 t} + \hat k}, and \eqn{\Delta} is the non-inferiority or equivalence margin (\code{cut}).
 }
 \examples{
 (v <- getN_Count_Super(

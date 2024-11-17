@@ -15,13 +15,13 @@ getPwr_Surv_Super_JM1(
   pi = 0.5,
   alpha = 0.025,
   beta = NA,
-  N = NA,
+  Ne = NA,
   r = 1,
   criterion = 1,
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2
 )
 
 getPwr_Surv_Noninf_JM1(
@@ -33,14 +33,14 @@ getPwr_Surv_Noninf_JM1(
   cut,
   alpha = 0.025,
   beta = NA,
-  N = NA,
+  Ne = NA,
   r = 1,
   criterion = 1,
   direct = 1,
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2
 )
 
 getPwr_Surv_Equi_JM1(
@@ -52,35 +52,36 @@ getPwr_Surv_Equi_JM1(
   cut,
   alpha = 0.025,
   beta = NA,
-  N = NA,
+  Ne = NA,
   r = 1,
   criterion = 1,
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2,
+  maxNe = 1e+06
 )
 }
 \arguments{
-\item{delta_j}{log(HR) between treatment and control groups in target region.}
+\item{delta_j}{A vector. log(HR) between treatment and control groups in target region.}
 
-\item{delta_nj}{log(HR) between treatment and control groups in other regions. When \code{delta_nj} is not \code{NA}, \code{delta_a} will be calculated automatically.}
+\item{delta_nj}{A vector. log(HR) between treatment and control groups in other regions. When \code{delta_nj} is not \code{NA}, \code{delta_a} will be calculated automatically.}
 
-\item{delta_a}{log(HR) between treatment and control groups globally.}
+\item{delta_a}{A vector. log(HR) between treatment and control groups globally.}
 
-\item{f}{Proportion of sample size allocated to target region.}
+\item{f}{A vector. Proportion of number of events allocated to target region.}
 
-\item{pi}{Proportion of global efficacy to retain. The default value is 0.5, which means retaining half of the efficacy.}
+\item{pi}{A vector. Proportion of global efficacy to retain. Default value is 0.5, which means retaining half of the efficacy.}
 
-\item{alpha}{One-sided type I error rate for global success. The default value is 0.025.}
+\item{alpha}{A vector. One-sided type I error rate for global success. Default value is 0.025.}
 
-\item{beta}{Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
+\item{beta}{A vector. Type II error rate for global success, which is used to calculate global number of events only when \code{Ne} is \code{NA}.}
 
-\item{N}{Global sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, \code{N} will be calculated automatically.}
+\item{Ne}{A vector. Global number of events. When \code{Ne} is \code{NA} and \code{beta} is not \code{NA}, \code{Ne} will be calculated automatically.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{A vector. Ratio of the number of events of the treatment group to the control group. Default value is 1.}
 
-\item{criterion}{If \code{criterion = 1}, the consistency criterion defined on the log(HR) scale will be used. If \code{criterion = 2}, the consistency criterion defined on the HR scale will be used. See \code{details} for more information.}
+\item{criterion}{A vector. If \code{criterion = 1}, the consistency criterion defined on the log(HR) scale will be used. If \code{criterion = 2}, the consistency criterion defined on the HR scale will be used. See \code{details} for more information.}
 
 \item{sim}{Logical value. When set to \code{FALSE}, theoretical calculation is performed. When set to \code{TRUE}, simulation is used, which is more time-consuming.}
 
@@ -88,11 +89,13 @@ getPwr_Surv_Equi_JM1(
 
 \item{seed}{Random seed for simulation.}
 
-\item{numcore}{Number of CPU cores to use during simulation.}
+\item{numcore}{Number of CPU cores to use during simulation. Default value is 2.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin. For example, if the non-inferiority margin for HR is 0.6, then \code{cut = -log(0.6)}. If the non-inferiority margin for HR is 1.3, then \code{cut = log(1.3)}.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin. For example, if the non-inferiority margin for HR is 0.6, then \code{cut = -log(0.6)}. If the non-inferiority margin for HR is 1.3, then \code{cut = log(1.3)}.}
 
 \item{direct}{\code{direct = 1} indicates that a larger HR is preferable, while \code{direct = -1} indicates that a smaller HR is preferable.}
+
+\item{maxNe}{Maximum possible global number of events (\code{Ne}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame containing input parameters and returned power.
@@ -104,7 +107,7 @@ A data frame containing input parameters and returned power.
 }
 }
 \description{
-Based on Japan's Method 1, given the global and target region sample sizes, calculate and simulate the marginal probabilities, conditional probabilities, and joint probabilities of global success and efficacy consistency between target region and global, in clinical trials using superiority, non-inferiority, and equivalence designs with survival endpoints.
+Based on Japan's Method 1, given the global and target region number of events, calculate and simulate the marginal probabilities, conditional probabilities, and joint probabilities of global success and efficacy consistency between target region and global, in clinical trials using superiority, non-inferiority, and equivalence designs with survival endpoints.
 }
 \details{
 Taking the larger HR is preferable as an example. The global success criterion and the efficacy consistency criterion between target region and globally
@@ -135,25 +138,25 @@ Taking the larger HR is preferable as an example. The global success criterion a
 
 Where \eqn{\hat \delta = log(\hat {HR})} between treatment and control groups, and \eqn{\Delta} is the non-inferiority or equivalence margin (\code{cut}).
 
-For \code{criterion = 2}, by delta method, \eqn{e^{\hat \delta}} approximately follows a distribution of \eqn{N(e^{\delta}, (e^{\delta}\sqrt{\frac{1}{N / (r + 1)} + \frac{1}{Nr / (r + 1)}})^2)}, used in theoretical calculation (\code{sim=FALSE}).
+For \code{criterion = 2}, by delta method, \eqn{1 - e^{\hat \delta}} approximately follows a distribution of \eqn{N(1 - e^{\delta}, (e^{\delta}\sqrt{\frac{1}{N_e / (r + 1)} + \frac{1}{N_e r / (r + 1)}})^2)}, used in theoretical calculation (\code{sim=FALSE}).
 }
 \examples{
 getPwr_Surv_Super_JM1(
   delta_j = log(1.3),
   delta_a = log(1.4),
   f = seq(0.1, 0.9, 0.1),
-  pi = 0.5, alpha = 0.025, beta = NA, N = 200, r = 1, criterion = 1,
+  pi = 0.5, alpha = 0.025, beta = NA, Ne = 200, r = 1, criterion = 1,
   sim = FALSE
 )
 
-# delta_a will be calculated based on delta_j and delta_nj.
-# Global sample size will be calculated based on beta.
+# Delta_a will be calculated based on delta_j and delta_nj.
+# Global number of events will be calculated based on alpha and beta.
 getPwr_Surv_Noninf_JM1(
   delta_j = log(1.1),
   delta_nj = log(1.0),
   f = seq(0.1, 0.9, 0.1),
   cut = log(1.3),
-  pi = 0.5, alpha = 0.025, beta = 0.2, N = NA, r = 1, criterion = 2,
+  pi = 0.5, alpha = 0.025, beta = 0.2, Ne = NA, r = 1, criterion = 2,
   direct = -1, sim = FALSE
 )
 }

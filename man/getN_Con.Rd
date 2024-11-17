@@ -32,29 +32,29 @@ getN_Con_Equi(
 )
 }
 \arguments{
-\item{delta}{Mean difference between treatment and control groups.}
+\item{delta}{A vector. Mean difference between treatment and control groups.}
 
-\item{sigma}{Common standard deviation.}
+\item{sigma}{A vector. Common standard deviation.}
 
-\item{alpha}{One-sided type I error rate. The default value is 0.025.}
+\item{alpha}{A vector. One-sided type I error rate. Default value is 0.025.}
 
-\item{beta}{Type II error rate. When \code{beta} is \code{NA} and \code{N} is not \code{NA}, the power will be returned.}
+\item{beta}{A vector. Type II error rate. When \code{beta} is \code{NA} and \code{N} is not \code{NA}, the power will be returned.}
 
-\item{N}{Sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, the sample size will be returned.}
+\item{N}{A vector. Sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, the sample size will be returned.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{A vector. Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin.}
 
 \item{direct}{\code{direct = 1} indicates that a larger mean difference is preferable, while \code{direct = -1} indicates that a smaller mean difference is preferable.}
 
-\item{maxN}{Maximum possible sample size(\code{N}) in equivalence design. Default value is 1e6.}
+\item{maxN}{Maximum possible sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame containing input parameters and returned sample size or power.
 }
 \description{
-Calculating sample size when given power or power when given sample size for continuous endpoints.
+Calculating required sample size when given power or power when given sample size for continuous endpoints.
 }
 \details{
 Taking the larger mean difference is preferable as an example. Sample size calculation is based on the following Z test, with the success criterion:
@@ -68,7 +68,7 @@ in non-inferiority design:
 in equivalence design:
 \deqn{Z_u = \frac{\hat \delta + \Delta}{\hat \sigma\sqrt{\frac{1}{N / (r + 1)} + \frac{1}{Nr / (r + 1)}}} > \Phi^{-1}(1 - \alpha)\text{ and } Z_l = \frac{\hat \delta - \Delta}{\hat \sigma\sqrt{\frac{1}{N / (r + 1)} + \frac{1}{Nr / (r + 1)}}} < \Phi^{-1}(\alpha)}
 
-Where \eqn{\hat \delta} is the mean difference between treatment and control groups, and \eqn{\Delta} is the non-inferiority or equivalence margin.
+Where \eqn{\hat \delta} is the mean difference between treatment and control groups, and \eqn{\Delta} is the non-inferiority or equivalence margin (\code{cut}).
 }
 \examples{
 (v <- getN_Con_Super(delta = 1.5, sigma = 4, alpha = 0.025, beta = 0.2, N = NA, r = 1))

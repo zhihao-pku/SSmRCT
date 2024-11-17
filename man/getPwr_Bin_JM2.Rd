@@ -10,7 +10,7 @@
 getPwr_Bin_Super_JM2(
   p1_i,
   p0_i,
-  fi,
+  f_i,
   alpha = 0.025,
   beta = NA,
   N = NA,
@@ -24,8 +24,9 @@ getPwr_Bin_Super_JM2(
 getPwr_Bin_Noninf_JM2(
   p1_i,
   p0_i,
-  fi,
+  f_i,
   cut,
+  cut_i = NA,
   alpha = 0.025,
   beta = NA,
   N = NA,
@@ -40,8 +41,9 @@ getPwr_Bin_Noninf_JM2(
 getPwr_Bin_Equi_JM2(
   p1_i,
   p0_i,
-  fi,
+  f_i,
   cut,
+  cut_i = NA,
   alpha = 0.025,
   beta = NA,
   N = NA,
@@ -49,23 +51,24 @@ getPwr_Bin_Equi_JM2(
   scale = "RD",
   sim = FALSE,
   nsim = 1000,
-  seed = 0
+  seed = 0,
+  maxN = 1e+06
 )
 }
 \arguments{
-\item{p1_i}{A vector. Rate of treatment group in each region.}
+\item{p1_i}{A vector with length equal to number of regions. Rate of treatment group in each region.}
 
-\item{p0_i}{A vector. Rate of control group in each region.}
+\item{p0_i}{A vector with length equal to number of regions. Rate of control group in each region.}
 
-\item{fi}{A vector. Proportion of sample size allocated to each region.}
+\item{f_i}{A vector with length equal to number of regions. Proportion of sample size allocated to each region.}
 
-\item{alpha}{One-sided type I error rate for global success. The default value is 0.025.}
+\item{alpha}{One-sided type I error rate for global success. Default value is 0.025.}
 
 \item{beta}{Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
 
 \item{N}{Global sample size. Global sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, \code{N} will be calculated automatically.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
 \item{scale}{Optional values are "RD" for rate difference, "RR" for relative risk, and "OR" for odds ratio. Default value is "RD".}
 
@@ -75,9 +78,13 @@ getPwr_Bin_Equi_JM2(
 
 \item{seed}{Random seed for simulation.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin. For RD, the margin is on the original scale. For RR and OR, the margin is on the log scale. For example, if the non-inferiority margins for RD, RR, and OR are 0.2, 0.6, and 1.3, then the \code{cut = 0.2}, \code{cut = -log(0.6)}, and \code{cut = log(1.3)}, respectively.}
+\item{cut}{A positive value for non-inferiority or equivalence margin in global trial, and this margin is also used in the ith region when the ith element of cut_i is \code{NA}. For RD, the margin is on the original scale. For RR and OR, the margin is on the log scale. For example, if the non-inferiority margins for RD, RR, and OR are 0.2, 0.6, and 1.3, then the \code{cut = 0.2}, \code{cut = -log(0.6)}, and \code{cut = log(1.3)}, respectively.}
 
-\item{direct}{If \code{direct = 1}, larger values of RD/RR/OR are preferable. If \code{direct = -1}, smaller values of RD/RR/OR are preferable.}
+\item{cut_i}{A vector with length equal to number of regions. Positive value for non-inferiority or equivalence margin in each region. When \code{cut_i = NA} (default), globally margin will be used for each region.}
+
+\item{direct}{If \code{direct = 1}, larger values of RD, RR, and OR are preferable. If \code{direct = -1}, smaller values of RD, RR, and OR are preferable.}
+
+\item{maxN}{Maximum possible global sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A list where:
@@ -90,6 +97,7 @@ A list where:
       \item{\code{pwr4 }}{The joint probability of global success and all region's efficacy being consistent with the global efficacy.}
     }
   }
+  \item{\code{cut_i }}{The non-inferiority or equivalence margin in each region (\code{cut_i}).}
   \item{\code{pwr_margin }}{The marginal probability that the ith region efficacy is consistent with the global efficacy.}
   \item{\code{pwr_condition }}{The conditional probability that the ith region efficacy is consistent with the global efficacy given global success.}
   \item{\code{pwr_joint }}{The joint probability of global success and the ith region efficacy being consistent with the global efficacy.}
@@ -99,7 +107,7 @@ A list where:
 Based on Japan's Method 2, given the global and target region sample sizes, calculate and simulate the marginal probabilities, conditional probabilities, and joint probabilities of global success and efficacy consistency between target region and globally, in clinical trials using superiority, non-inferiority, and equivalence designs with binary endpoints.
 }
 \details{
-Taking the larger RD/RR/OR is preferable as an example. The global success criterion and the efficacy consistency criterion between target region and globally
+Taking the larger RD, RR, and OR are preferable as an example. The global success criterion and the efficacy consistency criterion between target region and globally
 
 in superiority design:
 \deqn{Z_a = \frac{\hat \delta_a}{\sqrt{Var(\hat \delta_a)}} > \Phi^{-1}(1 - \alpha)}
@@ -107,49 +115,31 @@ in superiority design:
 
 in non-inferiority design:
 \deqn{Z_a = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} > \Phi^{-1}(1 - \alpha)}
-\deqn{\hat \delta_i+ \Delta > 0 \text{ for i = 1, 2, .., m}}
+\deqn{\hat \delta_i+ \Delta_i > 0 \text{ for i = 1, 2, .., m}}
 
 in equivalence design:
 \deqn{Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} > \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} < \Phi^{-1}(\alpha)}
-\deqn{\hat \delta_i + \Delta> 0 \text{ and } \hat \delta_i - \Delta < 0 \text{ for i = 1, 2, .., m}}
+\deqn{\hat \delta_i + \Delta_i > 0 \text{ and } \hat \delta_i - \Delta_i < 0 \text{ for i = 1, 2, .., m}}
 
-Where \eqn{\hat \delta = \hat p_1 - \hat p_0} for RD, \eqn{\hat \delta = log(\frac{\hat p_1}{\hat p_0})} for RR, and  \eqn{\hat \delta = log(\frac{\hat p_1 / (1 - \hat p_1)}{\hat p_0 / (1 - \hat p_0)})}  for OR.  \eqn{\Delta} is the non-inferiority or equivalence margin (\code{cut}).
+Where \eqn{\hat \delta = \hat p_1 - \hat p_0} for RD, \eqn{\hat \delta = log(\frac{\hat p_1}{\hat p_0})} for RR, and  \eqn{\hat \delta = log(\frac{\hat p_1 / (1 - \hat p_1)}{\hat p_0 / (1 - \hat p_0)})}  for OR.  \eqn{\Delta} and \eqn{\Delta_i} are the non-inferiority or equivalence margins in global trial (\code{cut}) and each region (\code{cut_i}), respectively.
 }
 \examples{
-f_set <- seq(0.1, 0.9, 0.1)
-map_dfr(
-  .x = 1:length(f_set),
-  .f = function(i) {
-    f <- f_set[i]
-    res <- getPwr_Bin_Super_JM2(
-      p1_i = c(0.7, 0.75),
-      p0_i = c(0.5, 0.5),
-      fi = c(f, 1 - f),
-      alpha = 0.025, beta = NA, N = 100, r = 1, scale = "RD", sim = FALSE
-    )$overall
-    res$f <- f
-    res
-  }
+getPwr_Bin_Super_JM2(
+  p1_i = c(0.7, 0.75),
+  p0_i = c(0.5, 0.5),
+  f_i = c(0.5, 0.5),
+  alpha = 0.025, beta = NA, N = 100, r = 1, scale = "RD", sim = FALSE
 )
 
-# Global rates of treatment and control groups will be calculated based on p1_i, p0_i, and fi.
-# Global sample size will be calculated based on beta.
-f_set <- seq(0.1, 0.9, 0.1)
-map_dfr(
-  .x = 1:length(f_set),
-  .f = function(i) {
-    f <- f_set[i]
-    res <- getPwr_Bin_Noninf_JM2(
-      p1_i = c(0.6, 0.5),
-      p0_i = c(0.5, 0.5),
-      fi = c(f, 1 - f),
-      cut = log(1.4),
-      alpha = 0.025, beta = 0.2, N = NA, r = 1, scale = "RR", direct = -1,
-      sim = FALSE
-    )$overall
-    res$f <- f
-    res
-  }
+# Global rates of treatment and control groups will be calculated based on p1_i, p0_i, and f_i.
+# Non-inferiority margin in global trial and each region is log(1.4).
+# Global sample size will be calculated based on alpha and beta.
+getPwr_Bin_Noninf_JM2(
+  p1_i = c(0.6, 0.5),
+  p0_i = c(0.5, 0.5),
+  f_i = c(0.5, 0.5),
+  cut = log(1.4),
+  alpha = 0.025, beta = 0.2, N = NA, r = 1, scale = "RR", direct = -1, sim = FALSE
 )
 }
 \references{

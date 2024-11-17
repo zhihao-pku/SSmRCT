@@ -48,29 +48,29 @@ getN_Con_Equi_JM1(
 )
 }
 \arguments{
-\item{delta_a}{Mean difference between treatment and control groups globally.}
+\item{delta_a}{A vector. Mean difference between treatment and control groups globally.}
 
-\item{delta_j}{Mean difference between treatment and control groups in target region.}
+\item{delta_j}{A vector. Mean difference between treatment and control groups in target region.}
 
-\item{sigma}{Common standard deviation.}
+\item{sigma}{A vector. Common standard deviation.}
 
-\item{pi}{Proportion of global efficacy to retain. The default value is 0.5, which means retaining half of the efficacy.}
+\item{pi}{A vector. Proportion of global efficacy to retain. Default value is 0.5, which means retaining half of the efficacy.}
 
-\item{alpha}{One-sided type I error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}. The default value is 0.025.}
+\item{alpha}{A vector. One-sided type I error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}. Default value is 0.025.}
 
-\item{beta}{Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
+\item{beta}{A vector. Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
 
-\item{beta1}{Type II error rate for efficacy consistency between target region and globally. The default value is 0.2.}
+\item{beta1}{A vector. Type II error rate for efficacy consistency between target region and globally. Default value is 0.2.}
 
-\item{N}{Global sample size. When \code{N} is \code{NA} and \code{alpha} and \code{beta} are not \code{NAs}, \code{N} will be calculated automatically.}
+\item{N}{A vector. Global sample size. When \code{N} is \code{NA} and \code{alpha} and \code{beta} are not \code{NA}, \code{N} will be calculated automatically.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{A vector. Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin.}
 
 \item{direct}{\code{direct = 1} indicates that a larger mean difference is preferable, while \code{direct = -1} indicates that a smaller mean difference is preferable.}
 
-\item{maxN}{Maximum possible sample size (\code{N}) in equivalence design. Default value is 1e6.}
+\item{maxN}{Maximum possible sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame where \code{f} is required proportion of sample size allocated to the target region, and \code{Nj} is the required sample size for the target region, calculated as \code{Nj = N * f}.
@@ -87,6 +87,7 @@ getN_Con_Super_JM1(
   r = 1
 )
 
+# Global sample size will be calculated based on alpha and beta.
 getN_Con_Noninf_JM1(
   delta_a = 0, delta_j = 0.5, sigma = 4, pi = 0.5, cut = 2, alpha = 0.025,
   beta = 0.2, beta1 = 0.2, N = NA, r = 1, direct = -1

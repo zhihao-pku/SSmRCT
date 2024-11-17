@@ -21,7 +21,7 @@ getPwr_Con_Super_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2
 )
 
 getPwr_Con_Noninf_JM1(
@@ -40,7 +40,7 @@ getPwr_Con_Noninf_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2
 )
 
 getPwr_Con_Equi_JM1(
@@ -58,29 +58,30 @@ getPwr_Con_Equi_JM1(
   sim = FALSE,
   nsim = 1000,
   seed = 0,
-  numcore = 4
+  numcore = 2,
+  maxN = 1e+06
 )
 }
 \arguments{
-\item{delta_j}{Mean difference between treatment and control groups in target region.}
+\item{delta_j}{A vector. Mean difference between treatment and control groups in target region.}
 
-\item{delta_nj}{Mean difference between treatment and control groups in other regions. When \code{delta_nj} is not \code{NA}, \code{delta_a} will be calculated automatically.}
+\item{delta_nj}{A vector. Mean difference between treatment and control groups in other regions. When \code{delta_nj} is not \code{NA}, \code{delta_a} will be calculated automatically.}
 
-\item{delta_a}{Mean difference between treatment and control groups globally.}
+\item{delta_a}{A vector. Mean difference between treatment and control groups globally.}
 
-\item{sigma}{Common standard deviation.}
+\item{sigma}{A vector. Common standard deviation.}
 
-\item{f}{Proportion of sample size allocated to target region.}
+\item{f}{A vector. Proportion of sample size allocated to target region.}
 
-\item{pi}{Proportion of global efficacy to retain. The default value is 0.5, which means retaining half of the efficacy.}
+\item{pi}{A vector. Proportion of global efficacy to retain. Default value is 0.5, which means retaining half of the efficacy.}
 
-\item{alpha}{One-sided type I error rate for global success. The default value is 0.025.}
+\item{alpha}{A vector. One-sided type I error rate for global success. Default value is 0.025.}
 
-\item{beta}{Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
+\item{beta}{A vector. Type II error rate for global success, which is used to calculate global sample size only when \code{N} is \code{NA}.}
 
-\item{N}{Global sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, \code{N} will be calculated automatically.}
+\item{N}{A vector. Global sample size. When \code{N} is \code{NA} and \code{beta} is not \code{NA}, \code{N} will be calculated automatically.}
 
-\item{r}{Ratio of the sample sizes of the treatment group to the control group. The default value is 1.}
+\item{r}{A vector. Ratio of sample sizes of treatment group to control group. Default value is 1.}
 
 \item{sim}{Logical value. When set to \code{FALSE}, theoretical calculation is performed. When set to \code{TRUE}, simulation is used, which is more time-consuming.}
 
@@ -88,11 +89,13 @@ getPwr_Con_Equi_JM1(
 
 \item{seed}{Random seed for simulation.}
 
-\item{numcore}{Number of CPU cores to use during simulation.}
+\item{numcore}{Number of CPU cores to use during simulation. Default value is 2.}
 
-\item{cut}{A positive value for non-inferiority or equivalence margin.}
+\item{cut}{A vector. Positive value for non-inferiority or equivalence margin.}
 
 \item{direct}{\code{direct = 1} indicates that a larger mean difference is preferable, while \code{direct = -1} indicates that a smaller mean difference is preferable.}
+
+\item{maxN}{Maximum possible global sample size (\code{N}) in equivalence design. Default value is 1e+06.}
 }
 \value{
 A data frame containing input parameters and returned power.
@@ -121,7 +124,7 @@ in equivalence design:
 \deqn{Z_{a_u} = \frac{\hat \delta_a + \Delta}{\sqrt{Var(\hat \delta_a)}} > \Phi^{-1}(1 - \alpha)\text{ and }Z_{a_l} = \frac{\hat \delta_a - \Delta}{\sqrt{Var(\hat \delta_a)}} < \Phi^{-1}(\alpha)}
 \deqn{\hat \delta_j - \hat \delta_a + \pi\Delta > 0\text{ and }\hat \delta_j - \hat \delta_a - \pi\Delta < 0}
 
-Where \eqn{\hat \delta} is the mean difference between treatment and control groups, and \eqn{\Delta} is the non-inferiority or equivalence margin.
+Where \eqn{\hat \delta} is the mean difference between treatment and control groups, and \eqn{\Delta} is the non-inferiority or equivalence margin (\code{cut}).
 }
 \examples{
 getPwr_Con_Super_JM1(
@@ -129,8 +132,8 @@ getPwr_Con_Super_JM1(
   pi = 0.5, alpha = 0.025, beta = NA, N = 100, r = 1, sim = FALSE
 )
 
-# delta_a will be calculated based on delta_j and delta_nj.
-# Global sample size will be calculated based on beta.
+# Delta_a will be calculated based on delta_j and delta_nj.
+# Global sample size will be calculated based on alpha and beta.
 getPwr_Con_Noninf_JM1(
   delta_j = 0.2, delta_nj = 0.1, sigma = 1, f = seq(0.1, 0.9, 0.1),
   pi = 0.5, cut = 0.4, alpha = 0.025, beta = 0.2, N = NA, r = 1, direct = -1,
