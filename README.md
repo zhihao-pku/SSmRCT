@@ -19,14 +19,19 @@ In some countries (e.g., China), installation may fail due to network issues. Yo
 Assuming that a larger $\delta$ is more favorable, the criterion of treatment effect consistency between target region and globally is as follows:
 
 Superiority design:
+
 $$
 \hat \delta_j - \pi\hat \delta_a > 0
 $$
+
 Non-inferiority design:
+
 $$
 \hat \delta_j - \hat \delta_a + \pi\Delta > 0
 $$
+
 Equivalence design:
+
 $$
 \hat \delta_j - \hat \delta_a + \pi\Delta > 0\text{ and }\hat \delta_j - \hat \delta_a - \pi\Delta < 0
 $$
@@ -41,14 +46,19 @@ $$
 Assuming that a larger $\delta$ is more favorable, the criterion of treatment effect consistency between region $i$ and the globally is as follows:
 
 Superiority design:
+
 $$
 \hat \delta_i > 0 \text{ for i = 1, 2, .., m}
 $$
+
 Non-inferiority design:
+
 $$
 \hat \delta_i + \Delta_i > 0 \text{ for i = 1, 2, .., m}
 $$
+
 Equivalence design:
+
 $$
 \hat \delta_i + \Delta_i > 0 \text{ and } \hat \delta_i - \Delta_i < 0 \text{ for i = 1, 2, .., m}
 $$
