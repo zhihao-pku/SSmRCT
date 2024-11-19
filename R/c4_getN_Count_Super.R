@@ -83,7 +83,7 @@ getN_Count_Super <- function(delta, lambda0, t, k = 0, alpha = 0.025, beta = NA,
       dplyr::if_else(delta > 0, 1 - pnorm(q = qnorm(1 - alpha), mean = z, sd = 1), pnorm(q = -qnorm(1 - alpha), mean = z, sd = 1))
     }
     if (is.na(N) & (!is.na(beta))) {
-      n0 <- (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 + sigma0^2 / r) / delta^2
+      n0 <- (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 / r + sigma0^2) / delta^2
       n0 <- ceiling(n0)
       n1 <- r * n0
       N <- n1 + n0
@@ -135,7 +135,7 @@ getN_Count_Noninf <- function(delta, lambda0, t, k = 0, cut, alpha = 0.025, beta
       dplyr::if_else(direct == 1, 1 - pnorm(q = qnorm(1 - alpha), mean = z, sd = 1), pnorm(q = -qnorm(1 - alpha), mean = z, sd = 1))
     }
     if (is.na(N) & (!is.na(beta))) {
-      n0 <- dplyr::if_else(direct == 1, (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 + sigma0^2 / r) / (delta + cut)^2, (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 + sigma0^2 / r) / (delta - cut)^2)
+      n0 <- dplyr::if_else(direct == 1, (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 / r + sigma0^2) / (delta + cut)^2, (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 / r + sigma0^2) / (delta - cut)^2)
       n0 <- ceiling(n0)
       n1 <- r * n0
       N <- n1 + n0

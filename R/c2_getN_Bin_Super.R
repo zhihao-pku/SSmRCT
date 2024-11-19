@@ -92,7 +92,7 @@ getN_Bin_Super <- function(p1, p0, alpha = 0.025, beta = NA, N = NA, r = 1, scal
         sigma1 <- sqrt(1 / (1 - p1) / p1)
         sigma0 <- sqrt(1 / (1 - p0) / p0)
       }
-      n0 <- (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 + sigma0^2 / r) / delta^2
+      n0 <- (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 / r + sigma0^2) / delta^2
       n0 <- ceiling(n0)
       n1 <- r * n0
       N <- n1 + n0
@@ -173,7 +173,7 @@ getN_Bin_Noninf <- function(p1, p0, cut, alpha = 0.025, beta = NA, N = NA, r = 1
         sigma1 <- sqrt(1 / (1 - p1) / p1)
         sigma0 <- sqrt(1 / (1 - p0) / p0)
       }
-      n0 <- dplyr::if_else(direct == 1, (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 + sigma0^2 / r) / (delta + cut)^2, (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 + sigma0^2 / r) / (delta - cut)^2)
+      n0 <- dplyr::if_else(direct == 1, (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 / r + sigma0^2) / (delta + cut)^2, (qnorm(1 - alpha) + qnorm(1 - beta))^2 * (sigma1^2 / r + sigma0^2) / (delta - cut)^2)
       n0 <- ceiling(n0)
       n1 <- r * n0
       N <- n1 + n0
