@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Package SSmRCT for regional sample size allocation</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Package SSmRCT for regional sample size
+allocation</h1>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Package <code>SSmRCT</code> is designed to determine the regional
+sample size allocation strategy in mRCTs (Multi-Regional Clinical
+Trials). It is applicable to continuous, binary, survival, and count
+endpoints and is suitable for superiority, non-inferiority, and
+equivalence designs.</p>
+</div>
+<div id="japans-methods" class="section level2">
+<h2>Japan’s Methods</h2>
+<div id="method-1" class="section level3">
+<h3>Method 1</h3>
+<p>Assuming that a larger <span class="math inline">\(\delta\)</span> is
+more favorable, the criterion of treatment effect consistency between
+target region and globally is as follows:</p>
+<p>Superiority design: <span class="math display">\[
+\hat \delta_j - \pi\hat \delta_a &gt; 0
+\]</span> Non-inferiority design: <span class="math display">\[
+\hat \delta_j - \hat \delta_a + \pi\Delta &gt; 0
+\]</span> Equivalence design: <span class="math display">\[
+\hat \delta_j - \hat \delta_a + \pi\Delta &gt; 0\text{ and }\hat
+\delta_j - \hat \delta_a - \pi\Delta &lt; 0
+\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\delta_j\)</span> and <span class="math inline">\(\delta_a\)</span> are the treatment effects in the
+target region and globally, respectively.</p></li>
+<li><p><span class="math inline">\(\pi\)</span> is the proportion of the
+global treatment effect retained in the target region.</p></li>
+<li><p><span class="math inline">\(\Delta\)</span> is the
+non-inferiority or equivalence margin.</p></li>
+</ul>
+</div>
+<div id="method-2" class="section level3">
+<h3>Method 2</h3>
+<p>Assuming that a larger <span class="math inline">\(\delta\)</span> is
+more favorable, the criterion of treatment effect consistency between
+region <span class="math inline">\(i\)</span> and globally is as
+follows:</p>
+<p>Superiority design: <span class="math display">\[
+\hat \delta_i &gt; 0 \text{ for i = 1, 2, .., m}
+\]</span> Non-inferiority design: <span class="math display">\[
+\hat \delta_i + \Delta_i &gt; 0 \text{ for i = 1, 2, .., m}
+\]</span> Equivalence design: <span class="math display">\[
+\hat \delta_i + \Delta_i &gt; 0 \text{ and } \hat \delta_i - \Delta_i
+&lt; 0 \text{ for i = 1, 2, .., m}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\Delta_i\)</span> is the non-inferiority
+or equivalence margin for region <span class="math inline">\(i\)</span>.</li>
+</ul>
+<p>In above formulas, <span class="math inline">\(\delta\)</span> can
+represent the mean difference for continuous endpoints, the rate
+difference, <span class="math inline">\(log(RR)\)</span>, or <span class="math inline">\(log(OR)\)</span> for binary endpoints, <span class="math inline">\(log(RR)\)</span> for count endpoints, and <span class="math inline">\(log(HR)\)</span> or <span class="math inline">\(HR
+- 1\)</span> for survival endpoints.</p>
+</div>
+</div>
+<div id="ssmrct-usage-examples" class="section level2">
+<h2>SSmRCT Usage Examples</h2>
+<p>This package mainly includes three series of functions:</p>
+<p>Series 1: <code>getN_xx_xx</code></p>
+<p>Calculate power given a sample size, or calculate sample size given a
+power.</p>
+<p>Series 2: <code>getN_xx_xx_JM1</code></p>
+<p>Calculate the proportion of the target region’s sample size to the
+global sample size given the global sample size and the required
+consistency probability of the target region’s treatment effect with the
+global treatment effect.</p>
+<p>Series 3: <code>getPwr_xx_xx_JM1</code> and
+<code>getPwr_xx_xx_JM2</code></p>
+<p>Calculate the power of the trial given the global sample size and the
+target region’s sample size, including:</p>
+<ul>
+<li>Marginal power: Probability of global trial success</li>
+<li>Marginal power: Probability of consistency of the target region’s
+treatment effect with the global treatment effect</li>
+<li>Joint power: Probability of global trial success and consistency of
+the target region’s treatment effect with the global treatment
+effect</li>
+<li>Conditional power: Probability of consistency of the target region’s
+treatment effect with the global treatment effect given global trial
+success</li>
+</ul>
+</div>
+<div id="series-1-getn_xx_xx" class="section level2">
+<h2>Series 1: <code>getN_xx_xx</code></h2>
+<p>Calculate power given a sample size, or calculate sample size given a
+power.</p>
+<div id="example-1-continuous-endpoint-superiority-design" class="section level3">
+<h3>Example 1: Continuous Endpoint, Superiority Design</h3>
+<p>Mean differences between the treatment group and the control group
+are 1.2, 1.3, 1.4, 1.5, with a common standard deviation of 4.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(SSmRCT)</span></code></pre></div>
+<p>When <code>beta</code> is not <code>NA</code> and <code>N</code> is
+<code>NA</code>, it will return the sample size.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">getN_Con_Super</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="at">delta =</span> <span class="fu">seq</span>(<span class="fl">1.2</span>, <span class="fl">1.5</span>, <span class="fl">0.1</span>), <span class="at">sigma =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="fl">0.2</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">N =</span> <span class="cn">NA</span>, <span class="at">r =</span> <span class="dv">1</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt;   delta sigma alpha beta   N  n1  n0 r       pwr</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; 1   1.2     4 0.025  0.2 350 175 175 1 0.8013015</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; 2   1.3     4 0.025  0.2 298 149 149 1 0.8010063</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; 3   1.4     4 0.025  0.2 258 129 129 1 0.8026021</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; 4   1.5     4 0.025  0.2 224 112 112 1 0.8013015</span></span></code></pre></div>
+<p>When <code>beta</code> is <code>NA</code> and <code>N</code> is not
+<code>NA</code>, it will return the power.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">getN_Con_Super</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">delta =</span> <span class="fl">1.5</span>, <span class="at">sigma =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="cn">NA</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">seq</span>(<span class="dv">140</span>, <span class="dv">200</span>, <span class="dv">20</span>), <span class="at">r =</span> <span class="dv">1</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt;   delta sigma alpha beta   N  n1  n0 r       pwr</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; 1   1.5     4 0.025   NA 140  70  70 1 0.6020149</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; 2   1.5     4 0.025   NA 160  80  80 1 0.6597366</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; 3   1.5     4 0.025   NA 180  90  90 1 0.7107621</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; 4   1.5     4 0.025   NA 200 100 100 1 0.7554329</span></span></code></pre></div>
+</div>
+<div id="example-2-continuous-endpoint-non-inferiority-design" class="section level3">
+<h3>Example 2: Continuous Endpoint, Non-Inferiority Design</h3>
+<p>Mean difference between the treatment group and the control group is
+1, with a common standard deviation of 4. Non-inferiority margins are 2,
+2.5, 3, and <code>direct = -1</code> indicates that a smaller mean
+difference is more favorable.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">getN_Con_Noninf</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">delta =</span> <span class="dv">1</span>, <span class="at">sigma =</span> <span class="dv">4</span>, <span class="at">cut =</span> <span class="fu">seq</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="fl">0.5</span>), <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="fl">0.2</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">N =</span> <span class="cn">NA</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">direct =</span> <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;   delta sigma cut alpha beta direct   N  n1  n0 r       pwr</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 1     1     4 2.0 0.025  0.2     -1 504 252 252 1 0.8013015</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 2     1     4 2.5 0.025  0.2     -1 224 112 112 1 0.8013015</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 3     1     4 3.0 0.025  0.2     -1 126  63  63 1 0.8013015</span></span></code></pre></div>
+</div>
+<div id="example-3-survival-endpoint-non-inferiority-design" class="section level3">
+<h3>Example 3: Survival Endpoint, Non-Inferiority Design</h3>
+<p>The hazard ratio (HR) of the treatment group compared to the control
+group is 1.1, and the non-inferiority margin for HR is 1.3.
+<code>direct = -1</code> indicates that a smaller HR is more favorable.
+This function returns the number of events rather than the sample
+size.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">getNe_Surv_Noninf</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">delta =</span> <span class="fu">log</span>(<span class="fl">1.1</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">cut =</span> <span class="fu">log</span>(<span class="fl">1.3</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="fl">0.2</span>, <span class="at">Ne =</span> <span class="cn">NA</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">direct =</span> <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;        delta       cut alpha beta direct   Ne ne1 ne0 r       pwr</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 1 0.09531018 0.2623643 0.025  0.2     -1 1126 563 563 1 0.8003475</span></span></code></pre></div>
+</div>
+</div>
+<div id="number-of-event-to-sample-size-ne_to_n" class="section level2">
+<h2>Number of Event to Sample Size: <code>Ne_to_N</code></h2>
+<p>Given the number of events, calculate the required sample size using
+the <code>Ne_to_N</code> function.</p>
+<div id="example-1-followed-until-the-end-of-study" class="section level3">
+<h3>Example 1: Followed Until the End of Study</h3>
+<p>Required event number is 100, sample size ratio of treatment group to
+control group is 1:1, median survival time of control group is 20
+months, hazard ratio (HR) of treatment group compared to control group
+is 0.75, annual dropout rate is 5%, enrollment duration is 18 months,
+follow-up durations are 16, 18, and 24 months, and participants are
+followed until the end of the study.</p>
+<p>For example, when the follow-up duration is 18 months, the event
+rates for the treatment group, control group, and total are 0.47, 0.57,
+and 0.52, respectively. The required sample sizes for the treatment
+group, control group, and total are 95, 95, and 190, respectively.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">Ne_to_N</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="at">Ne =</span> <span class="dv">100</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">lambda0 =</span> <span class="fu">log</span>(<span class="dv">2</span>) <span class="sc">/</span> <span class="dv">20</span>, <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>) <span class="sc">/</span> <span class="dv">20</span> <span class="sc">*</span> <span class="fl">0.75</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">dropoutRate =</span> <span class="fl">0.05</span>, <span class="at">dropoutTime =</span> <span class="dv">12</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">a =</span> <span class="dv">18</span>, <span class="at">f =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">18</span>, <span class="dv">24</span>), <span class="at">follow_up =</span> <span class="st">&quot;until_end&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>)</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt;    Ne r    lambda0    lambda1 dropoutRate dropoutTime  a  f  l follow_up</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; 1 100 1 0.03465736 0.02599302        0.05          12 18 16 NA until_end</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; 2 100 1 0.03465736 0.02599302        0.05          12 18 18 NA until_end</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; 3 100 1 0.03465736 0.02599302        0.05          12 18 24 NA until_end</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt;   eventRate0 eventRate1 eventRate        N0        N1        N</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; 1  0.5469831  0.4508670 0.4989250 100.21545 100.21545 200.4309</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; 2  0.5727036  0.4748355 0.5237696  95.46183  95.46183 190.9237</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; 3  0.6388738  0.5386219 0.5887478  84.92600  84.92600 169.8520</span></span></code></pre></div>
+</div>
+<div id="example-2-followed-a-fixed-period" class="section level3">
+<h3>Example 2: Followed a fixed period</h3>
+<p>Each participant is followed for fixed 16, 18, and 20 months after
+enrollment.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">Ne_to_N</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">Ne =</span> <span class="dv">100</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">lambda0 =</span> <span class="fu">log</span>(<span class="dv">2</span>) <span class="sc">/</span> <span class="dv">20</span>, <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>) <span class="sc">/</span> <span class="dv">20</span> <span class="sc">*</span> <span class="fl">0.75</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">dropoutRate =</span> <span class="fl">0.05</span>, <span class="at">dropoutTime =</span> <span class="dv">12</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">l =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">18</span>, <span class="dv">20</span>), <span class="at">follow_up =</span> <span class="st">&quot;fixed_period&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt;    Ne r    lambda0    lambda1 dropoutRate dropoutTime  a  f  l    follow_up</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; 1 100 1 0.03465736 0.02599302        0.05          12 NA NA 16 fixed_period</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 2 100 1 0.03465736 0.02599302        0.05          12 NA NA 18 fixed_period</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; 3 100 1 0.03465736 0.02599302        0.05          12 NA NA 20 fixed_period</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt;   eventRate0 eventRate1 eventRate       N0       N1        N</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; 1  0.4127430  0.3296716 0.3712073 134.6956 134.6956 269.3912</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; 2  0.4485171  0.3607570 0.4046370 123.5675 123.5675 247.1351</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; 3  0.4816120  0.3900169 0.4358145 114.7277 114.7277 229.4554</span></span></code></pre></div>
+</div>
+</div>
+<div id="series-2-getn_xx_xx_jm1" class="section level2">
+<h2>Series 2: <code>getN_xx_xx_JM1</code></h2>
+<p>Given the global sample size, the required consistency probability of
+the target region’s treatment effect with the global treatment effect,
+and based on Japan’s Method 1, calculate the proportion of the target
+region’s sample size to the global sample size.</p>
+<div id="example-1-binary-endpoint-superiority-design" class="section level3">
+<h3>Example 1: Binary Endpoint, Superiority Design</h3>
+<p>The global sample size is 200, with a 1:1 ratio between the treatment
+group and the control group. The effective rates for the global
+treatment group and control group are 0.75 and 0.5, respectively. The
+effective rates for the target region’s treatment group and control
+group are 0.7 and 0.5, respectively. The endpoint is the rate difference
+(<code>scale = &quot;RD&quot;</code>). The target region requires retaining 50% of
+the global treatment effect (<code>pi = 0.5</code>), and the consistency
+probability of the target region’s treatment effect with the global
+treatment effect is 80% (<code>beta1 = 0.2</code>). Under these
+conditions, the calculated proportion of the target region’s sample size
+to the global sample size is 0.41, with the number of participants being
+81.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">getN_Bin_Super_JM1</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">p1_a =</span> <span class="fl">0.75</span>, <span class="at">p0_a =</span> <span class="fl">0.5</span>, <span class="at">p1_j =</span> <span class="fl">0.7</span>, <span class="at">p0_j =</span> <span class="fl">0.5</span>, <span class="at">pi =</span> <span class="fl">0.5</span>, <span class="at">beta1 =</span> <span class="fl">0.2</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">N =</span> <span class="dv">200</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="st">&quot;RD&quot;</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt;   p1_a p0_a p1_j p0_j     p1_nj p0_nj  pi alpha beta   N r scale pwr beta1</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 1 0.75  0.5  0.7  0.5 0.7841571   0.5 0.5    NA   NA 200 1    RD 0.8   0.2</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt;          f       Nj</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; 1 0.405873 81.17461</span></span></code></pre></div>
+</div>
+<div id="example-2-binary-endpoint-non-inferiority-design" class="section level3">
+<h3>Example 2: Binary Endpoint, Non-Inferiority Design</h3>
+<p>The effective rates for the global treatment group and control group
+are 0.5 and 0.5, respectively. The endpoint is the risk ratio (RR), and
+a smaller RR is better (<code>direct = -1</code>). Given the global
+trial’s one-sided alpha = 0.025 and beta = 0.1, the global trial’s
+sample size is calculated to be 192.</p>
+<p>The effective rates for the target region’s treatment group and
+control group are 0.6 and 0.5, respectively. The target region requires
+retaining 50% of the global treatment effect, and the consistency
+probability of the target region’s treatment effect with the global
+treatment effect is 80% (<code>beta1 = 0.2</code>). Under these
+conditions, the calculated proportion of the target region’s sample size
+to the global sample size is 0.82, with the number of participants being
+158.</p>
+<p>In this example, the global trial’s sample size is not provided and
+will be automatically calculated based on the global trial’s efficacy
+parameters, alpha, and beta.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">getN_Bin_Noninf_JM1</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">p1_a =</span> <span class="fl">0.5</span>, <span class="at">p0_a =</span> <span class="fl">0.5</span>, <span class="at">p1_j =</span> <span class="fl">0.6</span>, <span class="at">p0_j =</span> <span class="fl">0.5</span>, <span class="at">pi =</span> <span class="fl">0.5</span>, <span class="at">cut =</span> <span class="fu">log</span>(<span class="fl">1.6</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="fl">0.1</span>, <span class="at">beta1 =</span> <span class="fl">0.2</span>, <span class="at">N =</span> <span class="cn">NA</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="st">&quot;RR&quot;</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">direct =</span> <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;   p1_a p0_a p1_j p0_j      p1_nj p0_nj  pi       cut alpha beta   N r scale</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 1  0.5  0.5  0.6  0.5 0.03823555   0.5 0.5 0.4700036 0.025  0.1 192 1    RR</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt;   direct       pwr beta1         f      Nj</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; 1     -1 0.8000028   0.2 0.8219894 157.822</span></span></code></pre></div>
+<p>The <code>getN_xx_xx_JM1</code> series of functions can calculate
+multiple parameter values simultaneously, such as when considering
+non-inferiority margins for RR of 1.5, 1.6, and 1.7.</p>
+<p>It is important to note that when the non-inferiority margins are 1.5
+and 1.6, although the corresponding <code>f</code> can be calculated,
+the <code>p1_nj</code> calculated based on <code>p1_a</code> and
+<code>p1_j</code> is negative, so the <code>f</code> at this time is
+also not met the conditions.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">getN_Bin_Noninf_JM1</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">p1_a =</span> <span class="fl">0.5</span>, <span class="at">p0_a =</span> <span class="fl">0.5</span>, <span class="at">p1_j =</span> <span class="fl">0.6</span>, <span class="at">p0_j =</span> <span class="fl">0.5</span>, <span class="at">pi =</span> <span class="fl">0.5</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="at">cut =</span> <span class="fu">log</span>(<span class="fu">seq</span>(<span class="fl">1.5</span>, <span class="fl">1.7</span>, <span class="fl">0.1</span>)), <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="fl">0.2</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="at">beta1 =</span> <span class="fl">0.2</span>, <span class="at">N =</span> <span class="cn">NA</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="st">&quot;RR&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="at">direct =</span> <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>)</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt;   p1_a p0_a p1_j p0_j      p1_nj p0_nj  pi       cut alpha beta   N r scale</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; 1  0.5  0.5  0.6  0.5 -3.5374434   0.5 0.5 0.4054651 0.025  0.2 192 1    RR</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; 2  0.5  0.5  0.6  0.5 -0.1244289   0.5 0.5 0.4700036 0.025  0.2 144 1    RR</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; 3  0.5  0.5  0.6  0.5  0.1851602   0.5 0.5 0.5306283 0.025  0.2 112 1    RR</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt;   direct       pwr beta1         f        Nj</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt; 1     -1 0.8000002   0.2 0.9758305 187.35945</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; 2     -1 0.8000005   0.2 0.8619602 124.12227</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; 3     -1 0.7999981   0.2 0.7589431  85.00162</span></span></code></pre></div>
+</div>
+</div>
+<div id="regional-sample-size-under-japans-method-2" class="section level2">
+<h2>Regional Sample Size under Japan’s Method 2</h2>
+<p>Given the global sample size, the consistency probability of the
+treatment effect of region <span class="math inline">\(i\)</span> with
+the global treatment effect, and based on Japan’s Method 2, calculate
+the proportion of region <span class="math inline">\(i\)</span> sample
+size to the global sample size.</p>
+<p>With Japan’s Method 2, to prove that the efficacy in region <span class="math inline">\(i\)</span> is consistent with the global efficacy,
+it is only necessary to ensure that the direction of the efficacy
+estimate in region <span class="math inline">\(i\)</span> is consistent
+with the global efficacy direction. The sample size for region <span class="math inline">\(i\)</span> can be calculated using a general
+sample size formula, setting one-sided alpha = 0.5.</p>
+<div id="example-1-count-endpoint-superiority-design" class="section level3">
+<h3>Example 1: Count Endpoint, Superiority Design</h3>
+<p>The risk ratio (RR) for the treatment group compared to the control
+group in region <span class="math inline">\(i\)</span> is 1.2, with a
+baseline hazard rate of 0.1 per month for the control group. The average
+exposure duration is 5 months, and the number of events per unit time
+follows a Poisson distribution (<code>k = 0</code> for Poisson
+distribution and <code>k &gt; 0</code> for Negative distribution). The
+consistency probability of the region <span class="math inline">\(i\)</span> treatment effect with the global
+treatment effect is 80% (<code>beta = 0.2</code>). Under these
+conditions, the sample size for this region should be at least 158.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">getN_Count_Super</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">delta =</span> <span class="fu">log</span>(<span class="fl">1.2</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">lambda0 =</span> <span class="fl">0.1</span>, <span class="at">t =</span> <span class="dv">5</span>, <span class="at">k =</span> <span class="dv">0</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">beta =</span> <span class="fl">0.2</span>, <span class="at">N =</span> <span class="cn">NA</span>, <span class="at">r =</span> <span class="dv">1</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt;       delta lambda0 t k alpha beta   N n1 n0 r       pwr</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; 1 0.1823216     0.1 5 0   0.5  0.2 158 79 79 1 0.8013027</span></span></code></pre></div>
+</div>
+<div id="example-2-count-endpoint-equivalence-design" class="section level3">
+<h3>Example 2: Count Endpoint, Equivalence Design</h3>
+<p>The risk ratio (RR) for the treatment group compared to the control
+group in region <span class="math inline">\(i\)</span> is 1.1, with a
+equivalence margin for RR being 1.4. The consistency probability of the
+region <span class="math inline">\(i\)</span> treatment effect with the
+global treatment effect is 80%. Under these conditions, the sample size
+for this region should be at least 196.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">getN_Count_Equi</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="at">delta =</span> <span class="fu">log</span>(<span class="fl">1.1</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="at">lambda0 =</span> <span class="fl">0.1</span>, <span class="at">t =</span> <span class="dv">5</span>, <span class="at">k =</span> <span class="dv">1</span>, <span class="at">cut =</span> <span class="fu">log</span>(<span class="fl">1.4</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">beta =</span> <span class="fl">0.2</span>, <span class="at">N =</span> <span class="cn">NA</span>, <span class="at">r =</span> <span class="dv">1</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>)</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt;        delta lambda0 t k       cut alpha beta   N n1 n0 r       pwr</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; 1 0.09531018     0.1 5 1 0.3364722   0.5  0.2 196 98 98 1 0.8006631</span></span></code></pre></div>
+</div>
+</div>
+<div id="series-3-getpwr_xx_xx_jm1-getpwr_xx_xx_jm2" class="section level2">
+<h2>Series 3: <code>getPwr_xx_xx_JM1</code>,
+<code>getPwr_xx_xx_JM2</code></h2>
+<p>Given the global and target region sample sizes, calculate and
+simulate the global success probability and the consistency probability
+of the target region’s treatment effect with the global treatment effect
+based on Japan’s Method 1 and Method 2.</p>
+<div id="example-1-continuous-endpoint-superiority-design-japans-method-1" class="section level3">
+<h3>Example 1: Continuous Endpoint, Superiority Design, Japan’s Method
+1</h3>
+<p>The global trial sample size is 100, with a 1:1 ratio between the
+treatment group and the control group. The mean differences for the
+target region and globally are 0.5 and 0.7, respectively, with a common
+standard deviation of 1. The global trial’s one-sided alpha is 0.025,
+and the target region requires retaining 50% of the global treatment
+effect (<code>pi = 0.5</code>). When the target region’s sample size is
+50% of the global sample size (<code>f = 0.5</code>), based on
+theoretical calculation (<code>sim = FALSE</code>), the results are as
+follows:</p>
+<ul>
+<li><code>pwr1</code>: The marginal probability of global trial success
+is 0.94.</li>
+<li><code>pwr2</code>: The marginal probability that the target region’s
+treatment effect is consistent with the global treatment effect is
+0.75.</li>
+<li><code>pwr3</code>: The joint probability that the global trial is
+successful and the target region’s treatment effect is consistent with
+the global treatment effect is 0.72.</li>
+<li><code>pwr4</code>: The conditional probability that the target
+region’s treatment effect is consistent with the global treatment
+effect, given global trial success, is 0.77.</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">getPwr_Con_Super_JM1</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="at">delta_j =</span> <span class="fl">0.5</span>, <span class="at">delta_a =</span> <span class="fl">0.7</span>, <span class="at">sigma =</span> <span class="dv">1</span>, <span class="at">f =</span> <span class="fl">0.5</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">pi =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="cn">NA</span>, <span class="at">N =</span> <span class="dv">100</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">sim =</span> <span class="cn">FALSE</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt;   delta_a delta_j delta_nj sigma   f  pi alpha beta   N r      pwr1      pwr2</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; 1     0.7     0.5      0.9     1 0.5 0.5 0.025   NA 100 1 0.9382242 0.7488325</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt;        pwr3      pwr4</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; 1 0.7235823 0.7712253</span></span></code></pre></div>
+<p>The <code>getPwr_xx_xx_JM1</code> series of functions can calculate
+multiple parameter values simultaneously, such as
+<code>f = seq(0.1, 0.9, 0.1)</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">getPwr_Con_Super_JM1</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="at">delta_j =</span> <span class="fl">0.5</span>, <span class="at">delta_a =</span> <span class="fl">0.7</span>, <span class="at">sigma =</span> <span class="dv">1</span>, <span class="at">f =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="at">pi =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="cn">NA</span>, <span class="at">N =</span> <span class="dv">100</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">sim =</span> <span class="cn">FALSE</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co">#&gt;   delta_a delta_j  delta_nj sigma   f  pi alpha beta   N r      pwr1      pwr2</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co">#&gt; 1     0.7     0.5 0.7222222     1 0.1 0.5 0.025   NA 100 1 0.9382242 0.5973905</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt; 2     0.7     0.5 0.7500000     1 0.2 0.5 0.025   NA 100 1 0.9382242 0.6419976</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; 3     0.7     0.5 0.7857143     1 0.3 0.5 0.025   NA 100 1 0.9382242 0.6796171</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt; 4     0.7     0.5 0.8333333     1 0.4 0.5 0.025   NA 100 1 0.9382242 0.7146248</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; 5     0.7     0.5 0.9000000     1 0.5 0.5 0.025   NA 100 1 0.9382242 0.7488325</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; 6     0.7     0.5 1.0000000     1 0.6 0.5 0.025   NA 100 1 0.9382242 0.7832890</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt; 7     0.7     0.5 1.1666667     1 0.7 0.5 0.025   NA 100 1 0.9382242 0.8187115</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt; 8     0.7     0.5 1.5000000     1 0.8 0.5 0.025   NA 100 1 0.9382242 0.8555778</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt; 9     0.7     0.5 2.5000000     1 0.9 0.5 0.025   NA 100 1 0.9382242 0.8939983</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt;        pwr3      pwr4</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt; 1 0.5684372 0.6058650</span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; 2 0.6139979 0.6544255</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; 3 0.6524882 0.6954502</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co">#&gt; 4 0.6883889 0.7337147</span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="co">#&gt; 5 0.7235823 0.7712253</span></span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; 6 0.7592017 0.8091901</span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; 7 0.7961059 0.8485242</span></span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt; 8 0.8350790 0.8900634</span></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; 9 0.8771662 0.9349217</span></span></code></pre></div>
+<p>When the above results are calculated using a simulation method,
+<code>sim = FALSE</code> is changed to <code>sim = TRUE</code>,
+defaulting to 1000 simulations per parameter setting and using 2 CPU
+cores for computation.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">getPwr_Con_Super_JM1</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">delta_j =</span> <span class="fl">0.5</span>, <span class="at">delta_a =</span> <span class="fl">0.7</span>, <span class="at">sigma =</span> <span class="dv">1</span>, <span class="at">f =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>),</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">pi =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="cn">NA</span>, <span class="at">N =</span> <span class="dv">100</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">sim =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>)</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt;   delta_a delta_j  delta_nj sigma   f  pi alpha beta   N r  pwr1  pwr2  pwr3</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt; 1     0.7     0.5 0.7222222     1 0.1 0.5 0.025   NA 100 1 0.947 0.589 0.564</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; 2     0.7     0.5 0.7500000     1 0.2 0.5 0.025   NA 100 1 0.930 0.637 0.610</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; 3     0.7     0.5 0.7857143     1 0.3 0.5 0.025   NA 100 1 0.936 0.664 0.640</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; 4     0.7     0.5 0.8333333     1 0.4 0.5 0.025   NA 100 1 0.937 0.714 0.683</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; 5     0.7     0.5 0.9000000     1 0.5 0.5 0.025   NA 100 1 0.946 0.747 0.728</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; 6     0.7     0.5 1.0000000     1 0.6 0.5 0.025   NA 100 1 0.938 0.788 0.765</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; 7     0.7     0.5 1.1666667     1 0.7 0.5 0.025   NA 100 1 0.938 0.810 0.787</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; 8     0.7     0.5 1.5000000     1 0.8 0.5 0.025   NA 100 1 0.940 0.874 0.852</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt; 9     0.7     0.5 2.5000000     1 0.9 0.5 0.025   NA 100 1 0.941 0.890 0.875</span></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt;        pwr4</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; 1 0.5955649</span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; 2 0.6559140</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; 3 0.6837607</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; 4 0.7289221</span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; 5 0.7695560</span></span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="co">#&gt; 6 0.8155650</span></span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a><span class="co">#&gt; 7 0.8390192</span></span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="co">#&gt; 8 0.9063830</span></span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a><span class="co">#&gt; 9 0.9298618</span></span></code></pre></div>
+</div>
+<div id="example-2-binary-endpoint-non-inferiority-design-japans-method-1" class="section level3">
+<h3>Example 2: Binary Endpoint, Non-Inferiority Design, Japan’s Method
+1</h3>
+<p>The effective rates for the treatment group and control group in the
+target region are 0.6 and 0.5, respectively. The effective rates for the
+treatment group and control group in the non-target region are 0.5 and
+0.5, respectively. Given the proportion of the target region’s sample
+size (<code>f = 0.5</code>), the effective rates for the global
+treatment group and control group will be automatically calculated.</p>
+<p>The endpoint is the risk ratio (RR), and the non-inferiority margin
+for RR is 1.4, with <code>direct = -1</code> indicating that a smaller
+RR is better. Given the global trial’s one-sided alpha = 0.025 and beta
+= 0.2, to achieve 80% power, the global trial’s sample size is 492. The
+target region requires retaining 50% of the global treatment effect
+(<code>pi = 0.5</code>). Under these conditions, the power when the
+target region’s sample size is 50% of the global sample size
+(<code>f = 0.5</code>) is calculated.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">getPwr_Bin_Noninf_JM1</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="at">p1_j =</span> <span class="fl">0.6</span>, <span class="at">p0_j =</span> <span class="fl">0.5</span>, <span class="at">p1_nj =</span> <span class="fl">0.5</span>, <span class="at">p0_nj =</span> <span class="fl">0.5</span>, <span class="at">f =</span> <span class="fl">0.5</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">pi =</span> <span class="fl">0.5</span>, <span class="at">cut =</span> <span class="fu">log</span>(<span class="fl">1.4</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="fl">0.2</span>, <span class="at">N =</span> <span class="cn">NA</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="st">&quot;RR&quot;</span>, <span class="at">direct =</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>  <span class="at">sim =</span> <span class="cn">FALSE</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co">#&gt;   p1_a p0_a p1_j p0_j p1_nj p0_nj    delta_a   delta_j scale   f  pi       cut</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="co">#&gt; 1 0.55  0.5  0.6  0.5   0.5   0.5 0.09531018 0.1823216    RR 0.5 0.5 0.3364722</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt;   alpha beta   N r direct      pwr1     pwr2      pwr3      pwr4</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt; 1 0.025  0.2 492 1     -1 0.8009997 0.837892 0.6681649 0.8341637</span></span></code></pre></div>
+</div>
+<div id="example-3-survival-endpoint-equivalence-design-japans-method-2" class="section level3">
+<h3>Example 3: Survival Endpoint, Equivalence Design, Japan’s Method
+2</h3>
+<p>A multi-regional clinical trial (mRCT) is conducted in two regions
+with a total of 400 events, and the number of events between the
+treatment group and the control group is 1:1 (a default setting in some
+sample size calculation software like EAST, i.e., estimating the
+variance of <span class="math inline">\(log(HR)\)</span> under H0
+assumption). Each region is allocated to half of the events
+(<code>f_i = c(0.5, 0.5)</code>). The hazard ratios (HRs) for the
+treatment group compared to the control group in region 1 and region 2
+are 1.1 and 1.0, respectively. The equivalence margin for HR in the
+global trial is 1.3, and the equivalence margins for HR in region 1 and
+region 2 are 1.3 and 1.35, respectively. The calculated results are as
+follows:</p>
+<ul>
+<li><code>pwr1</code>: The probability of global trial success is
+0.45.</li>
+<li><code>pwr2</code>: The probability that the treatment effects in
+region 1 and region 2 are consistent with the global treatment effect is
+0.85, with 0.88 for region 1 and 0.97 for region 2.</li>
+<li><code>pwr3</code>: The probability that the global trial is
+successful and the treatment effects in region 1 and region 2 are
+consistent with the global treatment effect is 0.43, with 0.44 for
+region 1 and 0.44 for region 2.</li>
+<li><code>pwr4</code>: The probability that the treatment effects in
+region 1 and region 2 are consistent with the global treatment effect,
+given global trial success, is 0.97, with 0.97 for region 1 and 0.99 for
+region 2.</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">getPwr_Surv_Equi_JM2</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="at">delta_i =</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="fl">1.1</span>), <span class="fu">log</span>(<span class="fl">1.0</span>)),</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="at">f_i =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>),</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="at">cut =</span> <span class="fu">log</span>(<span class="fl">1.3</span>), <span class="at">cut_i =</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="fl">1.3</span>), <span class="fu">log</span>(<span class="fl">1.35</span>)),</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">beta =</span> <span class="cn">NA</span>, <span class="at">Ne =</span> <span class="dv">400</span>, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">sim =</span> <span class="cn">FALSE</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>)</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="co">#&gt; $overall</span></span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="co">#&gt;      delta_a       cut  Ne      pwr1      pwr2      pwr3      pwr4</span></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co">#&gt; 1 0.04765509 0.2623643 400 0.4471244 0.8459097 0.4334922 0.9695114</span></span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="co">#&gt; $cut_i</span></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a><span class="co">#&gt; [1] 0.2623643 0.3001046</span></span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a><span class="co">#&gt; $pwr_margin</span></span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co">#&gt; [1] 0.8755313 0.9661673</span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a><span class="co">#&gt; $pwr_joint</span></span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a><span class="co">#&gt; [1] 0.4352448 0.4434539</span></span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a><span class="co">#&gt; $pwr_condition</span></span>
+<span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a><span class="co">#&gt; [1] 0.9734310 0.9917907</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
