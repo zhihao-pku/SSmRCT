@@ -115,10 +115,10 @@ getPwr_Bin_Equi_JM1(
 \value{
 A data frame containing input parameters and returned power.
 \describe{
-  \item{\code{pwr1}}{The marginal probability of global success.}
-  \item{\code{pwr2}}{The marginal probability that the target region efficacy is consistent with the global efficacy.}
-  \item{\code{pwr3}}{The conditional probability that the target region efficacy is consistent with the global efficacy given global success.}
-  \item{\code{pwr4}}{The joint probability of global success and the target region efficacy being consistent with the global efficacy.}
+  \item{\code{pwr1 }}{The marginal probability of global success.}
+  \item{\code{pwr2 }}{The marginal probability that the target region efficacy is consistent with the global efficacy.}
+  \item{\code{pwr3 }}{The joint probability of global success and the target region efficacy being consistent with the global efficacy.}
+  \item{\code{pwr4 }}{The conditional probability that the target region efficacy is consistent with the global efficacy given global success.}
 }
 }
 \description{

@@ -26,14 +26,14 @@
 #'     \itemize{
 #'       \item{\code{pwr1 }}{The marginal probability of global success.}
 #'       \item{\code{pwr2 }}{The marginal probability that all region's efficacy is consistent with the global efficacy.}
-#'       \item{\code{pwr3 }}{The conditional probability that all region's efficacy is consistent with the global efficacy given global success.}
-#'       \item{\code{pwr4 }}{The joint probability of global success and all region's efficacy being consistent with the global efficacy.}
+#'       \item{\code{pwr3 }}{The joint probability of global success and all region's efficacy being consistent with the global efficacy.}
+#'       \item{\code{pwr4 }}{The conditional probability that all region's efficacy is consistent with the global efficacy given global success.}
 #'     }
 #'   }
 #'   \item{\code{cut_i }}{The non-inferiority or equivalence margin in each region (\code{cut_i}).}
 #'   \item{\code{pwr_margin }}{The marginal probability that the ith region efficacy is consistent with the global efficacy.}
-#'   \item{\code{pwr_condition }}{The conditional probability that the ith region efficacy is consistent with the global efficacy given global success.}
 #'   \item{\code{pwr_joint }}{The joint probability of global success and the ith region efficacy being consistent with the global efficacy.}
+#'   \item{\code{pwr_condition }}{The conditional probability that the ith region efficacy is consistent with the global efficacy given global success.}
 #' }
 #'
 #' @details
@@ -124,7 +124,7 @@ getPwr_Surv_Super_JM2 <- function(delta_i, f_i, alpha = 0.025, beta = NA, Ne = N
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- pwr_joint / pwr1
-    L <- list(overall = res, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   if (sim) {
     da <- data.frame()
@@ -176,7 +176,7 @@ getPwr_Surv_Super_JM2 <- function(delta_i, f_i, alpha = 0.025, beta = NA, Ne = N
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- colMeans(di[da$succ_a == 1, ])
-    L <- list(overall = res, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   return(L)
 }
@@ -246,7 +246,7 @@ getPwr_Surv_Noninf_JM2 <- function(delta_i, f_i, cut, cut_i = NA, alpha = 0.025,
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- pwr_joint / pwr1
-    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   if (sim) {
     da <- data.frame()
@@ -297,7 +297,7 @@ getPwr_Surv_Noninf_JM2 <- function(delta_i, f_i, cut, cut_i = NA, alpha = 0.025,
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- colMeans(di[da$succ_a == 1, ])
-    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   return(L)
 }
@@ -370,8 +370,8 @@ getPwr_Surv_Equi_JM2 <- function(delta_i, f_i, cut, cut_i = NA, alpha = 0.025, b
       pwr_joint_ <- mvtnorm::pmvnorm(lower = c(qnorm(1 - alpha), -Inf, 0, -Inf), upper = c(Inf, -qnorm(1 - alpha), Inf, 0), mean = c(u1, u2, ui1[k], ui2[k]), sigma = M2)
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
-    p_condition <- pwr_joint / pwr1
-    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, p_condition = p_condition, pwr_joint = pwr_joint)
+    pwr_condition <- pwr_joint / pwr1
+    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   if (sim) {
     da <- data.frame()
@@ -419,8 +419,8 @@ getPwr_Surv_Equi_JM2 <- function(delta_i, f_i, cut, cut_i = NA, alpha = 0.025, b
       pwr_joint_ <- mean(da$succ_a & di[, k])
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
-    p_condition <- colMeans(di[da$succ_a == 1, ])
-    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, p_condition = p_condition, pwr_joint = pwr_joint)
+    pwr_condition <- colMeans(di[da$succ_a == 1, ])
+    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   return(L)
 }

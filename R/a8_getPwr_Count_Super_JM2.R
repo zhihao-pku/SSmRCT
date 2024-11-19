@@ -29,14 +29,14 @@
 #'     \itemize{
 #'       \item{\code{pwr1 }}{The marginal probability of global success.}
 #'       \item{\code{pwr2 }}{The marginal probability that all region's efficacy is consistent with the global efficacy.}
-#'       \item{\code{pwr3 }}{The conditional probability that all region's efficacy is consistent with the global efficacy given global success.}
-#'       \item{\code{pwr4 }}{The joint probability of global success and all region's efficacy being consistent with the global efficacy.}
+#'       \item{\code{pwr3 }}{The joint probability of global success and all region's efficacy being consistent with the global efficacy.}
+#'       \item{\code{pwr4 }}{The conditional probability that all region's efficacy is consistent with the global efficacy given global success.}
 #'     }
 #'   }
 #'   \item{\code{cut_i }}{The non-inferiority or equivalence margin in each region (\code{cut_i}).}
 #'   \item{\code{pwr_margin }}{The marginal probability that the ith region efficacy is consistent with the global efficacy.}
-#'   \item{\code{pwr_condition }}{The conditional probability that the ith region efficacy is consistent with the global efficacy given global success.}
 #'   \item{\code{pwr_joint }}{The joint probability of global success and the ith region efficacy being consistent with the global efficacy.}
+#'   \item{\code{pwr_condition }}{The conditional probability that the ith region efficacy is consistent with the global efficacy given global success.}
 #' }
 #'
 #' @details
@@ -138,7 +138,7 @@ getPwr_Count_Super_JM2 <- function(delta_i, lambda0_i, t_i, k = 0, f_i, alpha = 
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- pwr_joint / pwr1
-    L <- list(overall = res, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   if (sim) {
     da <- data.frame()
@@ -206,7 +206,7 @@ getPwr_Count_Super_JM2 <- function(delta_i, lambda0_i, t_i, k = 0, f_i, alpha = 
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- colMeans(di[da$succ_a == 1, ])
-    L <- list(overall = res, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   return(L)
 }
@@ -285,7 +285,7 @@ getPwr_Count_Noninf_JM2 <- function(delta_i, lambda0_i, t_i, k = 0, f_i, cut, cu
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- pwr_joint / pwr1
-    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   if (sim) {
     da <- data.frame()
@@ -353,7 +353,7 @@ getPwr_Count_Noninf_JM2 <- function(delta_i, lambda0_i, t_i, k = 0, f_i, cut, cu
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- colMeans(di[da$succ_a == 1, ])
-    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   return(L)
 }
@@ -436,7 +436,7 @@ getPwr_Count_Equi_JM2 <- function(delta_i, lambda0_i, t_i, k = 0, f_i, cut, cut_
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- pwr_joint / pwr1
-    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   if (sim) {
     da <- data.frame()
@@ -502,7 +502,7 @@ getPwr_Count_Equi_JM2 <- function(delta_i, lambda0_i, t_i, k = 0, f_i, cut, cut_
       pwr_joint <- c(pwr_joint, pwr_joint_)
     }
     pwr_condition <- colMeans(di[da$succ_a == 1, ])
-    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_condition = pwr_condition, pwr_joint = pwr_joint)
+    L <- list(overall = res, cut_i = cut_i, pwr_margin = pwr_margin, pwr_joint = pwr_joint, pwr_condition = pwr_condition)
   }
   return(L)
 }

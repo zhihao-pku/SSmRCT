@@ -1,0 +1,305 @@
+---
+title: "Package SSmRCT for regional sample size allocation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SSmRCT}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+## Introduction
+
+Package `SSmRCT` is designed to determine the regional sample size allocation strategy in mRCTs (Multi-Regional Clinical Trials). It is applicable to continuous, binary, survival, and count endpoints and is suitable for superiority, non-inferiority, and equivalence designs.
+
+## Japan's Methods
+
+### Method 1
+
+Assuming that a larger $\delta$ is more favorable, the criterion of treatment effect consistency between target region and globally is as follows:
+
+Superiority design: $$
+\hat \delta_j - \pi\hat \delta_a > 0
+$$ Non-inferiority design: $$
+\hat \delta_j - \hat \delta_a + \pi\Delta > 0
+$$ Equivalence design: $$
+\hat \delta_j - \hat \delta_a + \pi\Delta > 0\text{ and }\hat \delta_j - \hat \delta_a - \pi\Delta < 0
+$$
+
+-   $\delta_j$ and $\delta_a$ are the treatment effects in the target region and globally, respectively.
+
+-   $\pi$ is the proportion of the global treatment effect retained in the target region.
+
+-   $\Delta$ is the non-inferiority or equivalence margin.
+
+### Method 2
+
+Assuming that a larger $\delta$ is more favorable, the criterion of treatment effect consistency between region $i$ and globally is as follows:
+
+Superiority design: $$
+\hat \delta_i > 0 \text{ for i = 1, 2, .., m}
+$$ Non-inferiority design: $$
+\hat \delta_i + \Delta_i > 0 \text{ for i = 1, 2, .., m}
+$$ Equivalence design: $$
+\hat \delta_i + \Delta_i > 0 \text{ and } \hat \delta_i - \Delta_i < 0 \text{ for i = 1, 2, .., m}
+$$
+
+-   $\Delta_i$ is the non-inferiority or equivalence margin for region $i$.
+
+In above formulas, $\delta$ can represent the mean difference for continuous endpoints, the rate difference, $log(RR)$, or $log(OR)$ for binary endpoints, $log(RR)$ for count endpoints, and $log(HR)$ or $HR - 1$ for survival endpoints.
+
+## SSmRCT Usage Examples
+
+This package mainly includes three series of functions:
+
+Series 1: `getN_xx_xx`
+
+Calculate power given a sample size, or calculate sample size given a power.
+
+Series 2: `getN_xx_xx_JM1`
+
+Calculate the proportion of the target region's sample size to the global sample size given the global sample size and the required consistency probability of the target region's treatment effect with the global treatment effect.
+
+Series 3: `getPwr_xx_xx_JM1` and `getPwr_xx_xx_JM2`
+
+Calculate the power of the trial given the global sample size and the target region's sample size, including:
+
+-   Marginal power: Probability of global trial success
+-   Marginal power: Probability of consistency of the target region's treatment effect with the global treatment effect
+-   Joint power: Probability of global trial success and consistency of the target region's treatment effect with the global treatment effect
+-   Conditional power: Probability of consistency of the target region's treatment effect with the global treatment effect given global trial success
+
+## Series 1: `getN_xx_xx`
+
+Calculate power given a sample size, or calculate sample size given a power.
+
+### Example 1: Continuous Endpoint, Superiority Design
+
+Mean differences between the treatment group and the control group are 1.2, 1.3, 1.4, 1.5, with a common standard deviation of 4.
+
+```{r}
+library(SSmRCT)
+```
+
+When `beta` is not `NA` and `N` is `NA`, it will return the sample size.
+
+```{r}
+getN_Con_Super(
+  delta = seq(1.2, 1.5, 0.1), sigma = 4, alpha = 0.025, beta = 0.2,
+  N = NA, r = 1
+)
+```
+
+When `beta` is `NA` and `N` is not `NA`, it will return the power.
+
+```{r}
+getN_Con_Super(
+  delta = 1.5, sigma = 4, alpha = 0.025, beta = NA,
+  N = seq(140, 200, 20), r = 1
+)
+```
+
+### Example 2: Continuous Endpoint, Non-Inferiority Design
+
+Mean difference between the treatment group and the control group is 1, with a common standard deviation of 4. Non-inferiority margins are 2, 2.5, 3, and `direct = -1` indicates that a smaller mean difference is more favorable.
+
+```{r}
+getN_Con_Noninf(
+  delta = 1, sigma = 4, cut = seq(2, 3, 0.5), alpha = 0.025, beta = 0.2,
+  N = NA, r = 1, direct = -1
+)
+```
+
+### Example 3: Survival Endpoint, Non-Inferiority Design
+
+The hazard ratio (HR) of the treatment group compared to the control group is 1.1, and the non-inferiority margin for HR is 1.3. `direct = -1` indicates that a smaller HR is more favorable. This function returns the number of events rather than the sample size.
+
+```{r}
+getNe_Surv_Noninf(
+  delta = log(1.1),
+  cut = log(1.3),
+  alpha = 0.025, beta = 0.2, Ne = NA, r = 1, direct = -1
+)
+```
+
+## Number of Event to Sample Size: `Ne_to_N`
+
+Given the number of events, calculate the required sample size using the `Ne_to_N` function.
+
+### Example 1: Followed Until the End of Study
+
+Required event number is 100, sample size ratio of treatment group to control group is 1:1, median survival time of control group is 20 months, hazard ratio (HR) of treatment group compared to control group is 0.75, annual dropout rate is 5%, enrollment duration is 18 months, follow-up durations are 16, 18, and 24 months, and participants are followed until the end of the study.
+
+For example, when the follow-up duration is 18 months, the event rates for the treatment group, control group, and total are 0.47, 0.57, and 0.52, respectively. The required sample sizes for the treatment group, control group, and total are 95, 95, and 190, respectively.
+
+```{r}
+Ne_to_N(
+  Ne = 100, r = 1, lambda0 = log(2) / 20, lambda1 = log(2) / 20 * 0.75,
+  dropoutRate = 0.05, dropoutTime = 12,
+  a = 18, f = c(16, 18, 24), follow_up = "until_end"
+)
+```
+
+### Example 2: Followed a fixed period
+
+Each participant is followed for fixed 16, 18, and 20 months after enrollment.
+
+```{r}
+Ne_to_N(
+  Ne = 100, r = 1, lambda0 = log(2) / 20, lambda1 = log(2) / 20 * 0.75,
+  dropoutRate = 0.05, dropoutTime = 12,
+  l = c(16, 18, 20), follow_up = "fixed_period"
+)
+```
+
+## Series 2: `getN_xx_xx_JM1`
+
+Given the global sample size, the required consistency probability of the target region's treatment effect with the global treatment effect, and based on Japan's Method 1, calculate the proportion of the target region's sample size to the global sample size.
+
+### Example 1: Binary Endpoint, Superiority Design
+
+The global sample size is 200, with a 1:1 ratio between the treatment group and the control group. The effective rates for the global treatment group and control group are 0.75 and 0.5, respectively. The effective rates for the target region's treatment group and control group are 0.7 and 0.5, respectively. The endpoint is the rate difference (`scale = "RD"`). The target region requires retaining 50% of the global treatment effect (`pi = 0.5`), and the consistency probability of the target region's treatment effect with the global treatment effect is 80% (`beta1 = 0.2`). Under these conditions, the calculated proportion of the target region's sample size to the global sample size is 0.41, with the number of participants being 81.
+
+```{r}
+getN_Bin_Super_JM1(
+  p1_a = 0.75, p0_a = 0.5, p1_j = 0.7, p0_j = 0.5, pi = 0.5, beta1 = 0.2,
+  N = 200, r = 1, scale = "RD"
+)
+```
+
+### Example 2: Binary Endpoint, Non-Inferiority Design
+
+The effective rates for the global treatment group and control group are 0.5 and 0.5, respectively. The endpoint is the risk ratio (RR), and a smaller RR is better (`direct = -1`). Given the global trial's one-sided alpha = 0.025 and beta = 0.1, the global trial's sample size is calculated to be 192.
+
+The effective rates for the target region's treatment group and control group are 0.6 and 0.5, respectively. The target region requires retaining 50% of the global treatment effect, and the consistency probability of the target region's treatment effect with the global treatment effect is 80% (`beta1 = 0.2`). Under these conditions, the calculated proportion of the target region's sample size to the global sample size is 0.82, with the number of participants being 158.
+
+In this example, the global trial's sample size is not provided and will be automatically calculated based on the global trial's efficacy parameters, alpha, and beta.
+
+```{r}
+getN_Bin_Noninf_JM1(
+  p1_a = 0.5, p0_a = 0.5, p1_j = 0.6, p0_j = 0.5, pi = 0.5, cut = log(1.6),
+  alpha = 0.025, beta = 0.1, beta1 = 0.2, N = NA, r = 1, scale = "RR",
+  direct = -1
+)
+```
+
+The `getN_xx_xx_JM1` series of functions can calculate multiple parameter values simultaneously, such as when considering non-inferiority margins for RR of 1.5, 1.6, and 1.7.
+
+It is important to note that when the non-inferiority margins are 1.5 and 1.6, although the corresponding `f` can be calculated, the `p1_nj` calculated based on `p1_a` and `p1_j` is negative, so the `f` at this time is also not met the conditions.
+
+```{r}
+getN_Bin_Noninf_JM1(
+  p1_a = 0.5, p0_a = 0.5, p1_j = 0.6, p0_j = 0.5, pi = 0.5,
+  cut = log(seq(1.5, 1.7, 0.1)), alpha = 0.025, beta = 0.2,
+  beta1 = 0.2, N = NA, r = 1, scale = "RR",
+  direct = -1
+)
+```
+
+## Regional Sample Size under Japan's Method 2
+
+Given the global sample size, the consistency probability of the treatment effect of region $i$ with the global treatment effect, and based on Japan's Method 2, calculate the proportion of region $i$ sample size to the global sample size.
+
+With Japan's Method 2, to prove that the efficacy in region $i$ is consistent with the global efficacy, it is only necessary to ensure that the direction of the efficacy estimate in region $i$ is consistent with the global efficacy direction. The sample size for region $i$ can be calculated using a general sample size formula, setting one-sided alpha = 0.5.
+
+### Example 1: Count Endpoint, Superiority Design
+
+The risk ratio (RR) for the treatment group compared to the control group in region $i$ is 1.2, with a baseline hazard rate of 0.1 per month for the control group. The average exposure duration is 5 months, and the number of events per unit time follows a Poisson distribution (`k = 0` for Poisson distribution and `k > 0` for Negative distribution). The consistency probability of the region $i$ treatment effect with the global treatment effect is 80% (`beta = 0.2`). Under these conditions, the sample size for this region should be at least 158.
+
+```{r}
+getN_Count_Super(
+  delta = log(1.2),
+  lambda0 = 0.1, t = 5, k = 0, alpha = 0.5, beta = 0.2, N = NA, r = 1
+)
+```
+
+### Example 2: Count Endpoint, Equivalence Design
+
+The risk ratio (RR) for the treatment group compared to the control group in region $i$ is 1.1, with a equivalence margin for RR being 1.4. The consistency probability of the region $i$ treatment effect with the global treatment effect is 80%. Under these conditions, the sample size for this region should be at least 196.
+
+```{r}
+getN_Count_Equi(
+  delta = log(1.1),
+  lambda0 = 0.1, t = 5, k = 1, cut = log(1.4),
+  alpha = 0.5, beta = 0.2, N = NA, r = 1
+)
+```
+
+## Series 3: `getPwr_xx_xx_JM1`, `getPwr_xx_xx_JM2`
+
+Given the global and target region sample sizes, calculate and simulate the global success probability and the consistency probability of the target region's treatment effect with the global treatment effect based on Japan's Method 1 and Method 2.
+
+### Example 1: Continuous Endpoint, Superiority Design, Japan's Method 1
+
+The global trial sample size is 100, with a 1:1 ratio between the treatment group and the control group. The mean differences for the target region and globally are 0.5 and 0.7, respectively, with a common standard deviation of 1. The global trial's one-sided alpha is 0.025, and the target region requires retaining 50% of the global treatment effect (`pi = 0.5`). When the target region's sample size is 50% of the global sample size (`f = 0.5`), based on theoretical calculation (`sim = FALSE`), the results are as follows:
+
+-   `pwr1`: The marginal probability of global trial success is 0.94.
+-   `pwr2`: The marginal probability that the target region's treatment effect is consistent with the global treatment effect is 0.75.
+-   `pwr3`: The joint probability that the global trial is successful and the target region's treatment effect is consistent with the global treatment effect is 0.72.
+-   `pwr4`: The conditional probability that the target region's treatment effect is consistent with the global treatment effect, given global trial success, is 0.77.
+
+```{r}
+getPwr_Con_Super_JM1(
+  delta_j = 0.5, delta_a = 0.7, sigma = 1, f = 0.5,
+  pi = 0.5, alpha = 0.025, beta = NA, N = 100, r = 1, sim = FALSE
+)
+```
+
+The `getPwr_xx_xx_JM1` series of functions can calculate multiple parameter values simultaneously, such as `f = seq(0.1, 0.9, 0.1)`.
+
+```{r}
+getPwr_Con_Super_JM1(
+  delta_j = 0.5, delta_a = 0.7, sigma = 1, f = seq(0.1, 0.9, 0.1),
+  pi = 0.5, alpha = 0.025, beta = NA, N = 100, r = 1, sim = FALSE
+)
+```
+
+When the above results are calculated using a simulation method, `sim = FALSE` is changed to `sim = TRUE`, defaulting to 1000 simulations per parameter setting and using 2 CPU cores for computation.
+
+```{r}
+getPwr_Con_Super_JM1(
+  delta_j = 0.5, delta_a = 0.7, sigma = 1, f = seq(0.1, 0.9, 0.1),
+  pi = 0.5, alpha = 0.025, beta = NA, N = 100, r = 1, sim = TRUE
+)
+```
+
+### Example 2: Binary Endpoint, Non-Inferiority Design, Japan's Method 1
+
+The effective rates for the treatment group and control group in the target region are 0.6 and 0.5, respectively. The effective rates for the treatment group and control group in the non-target region are 0.5 and 0.5, respectively. Given the proportion of the target region's sample size (`f = 0.5`), the effective rates for the global treatment group and control group will be automatically calculated.
+
+The endpoint is the risk ratio (RR), and the non-inferiority margin for RR is 1.4, with `direct = -1` indicating that a smaller RR is better. Given the global trial's one-sided alpha = 0.025 and beta = 0.2, to achieve 80% power, the global trial's sample size is 492. The target region requires retaining 50% of the global treatment effect (`pi = 0.5`). Under these conditions, the power when the target region's sample size is 50% of the global sample size (`f = 0.5`) is calculated.
+
+```{r}
+getPwr_Bin_Noninf_JM1(
+  p1_j = 0.6, p0_j = 0.5, p1_nj = 0.5, p0_nj = 0.5, f = 0.5,
+  pi = 0.5, cut = log(1.4),
+  alpha = 0.025, beta = 0.2, N = NA, r = 1, scale = "RR", direct = -1,
+  sim = FALSE
+)
+```
+
+### Example 3: Survival Endpoint, Equivalence Design, Japan's Method 2
+
+A multi-regional clinical trial (mRCT) is conducted in two regions with a total of 400 events, and the number of events between the treatment group and the control group is 1:1 (a default setting in some sample size calculation software like EAST, i.e., estimating the variance of $log(HR)$ under H0 assumption). Each region is allocated to half of the events (`f_i = c(0.5, 0.5)`). The hazard ratios (HRs) for the treatment group compared to the control group in region 1 and region 2 are 1.1 and 1.0, respectively. The equivalence margin for HR in the global trial is 1.3, and the equivalence margins for HR in region 1 and region 2 are 1.3 and 1.35, respectively. The calculated results are as follows:
+
+-   `pwr1`: The probability of global trial success is 0.45.
+-   `pwr2`: The probability that the treatment effects in region 1 and region 2 are consistent with the global treatment effect is 0.85, with 0.88 for region 1 and 0.97 for region 2.
+-   `pwr3`: The probability that the global trial is successful and the treatment effects in region 1 and region 2 are consistent with the global treatment effect is 0.43, with 0.44 for region 1 and 0.44 for region 2.
+-   `pwr4`: The probability that the treatment effects in region 1 and region 2 are consistent with the global treatment effect, given global trial success, is 0.97, with 0.97 for region 1 and 0.99 for region 2.
+
+```{r}
+getPwr_Surv_Equi_JM2(
+  delta_i = c(log(1.1), log(1.0)),
+  f_i = c(0.5, 0.5),
+  cut = log(1.3), cut_i = c(log(1.3), log(1.35)),
+  alpha = 0.025, beta = NA, Ne = 400, r = 1, sim = FALSE
+)
+```
